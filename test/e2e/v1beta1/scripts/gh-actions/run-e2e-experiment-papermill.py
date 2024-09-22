@@ -103,8 +103,6 @@ def main():
     else:
         logging.info("E2E test failed.")
 
-    logging.info("Trigger the workflow. ")
-
 
 if __name__ == "__main__":
     main()
