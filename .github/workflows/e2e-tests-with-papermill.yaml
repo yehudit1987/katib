@@ -2,8 +2,6 @@ name: Run Experiment
 
 on:
   push:
-    branches:
-      - main  # Change this to your target branch
   pull_request:
   workflow_dispatch:
 
