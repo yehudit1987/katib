@@ -5,11 +5,11 @@ on:
   pull_request: {}
   workflow_dispatch: {}
 
-inputs:
-  experiments:
-    required: false
-    description: early-stopping.ipynb, early-stopping_output.ipynb, kubeflow-e2e-mnist.ipynb, mpi-job-horovod.py
-    default: ""
+#inputs:
+#  experiments:
+#    required: false
+#    description: early-stopping.ipynb, early-stopping_output.ipynb, kubeflow-e2e-mnist.ipynb, mpi-job-horovod.py
+#    default: ""
 #  training-operator:
 #    required: false
 #    description: whether to deploy training-operator or not
