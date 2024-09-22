@@ -22,28 +22,29 @@ jobs:
         run: |
             pwd
 
-      - name: Prepare files
-        run: |
-          # Copy necessary files or perform setup
-          echo "Working directory: $(pwd)"  # Print the working directory
-          echo "List of files in current directory:"
-          ls -alh ./pkg/apis/manager/v1beta1/python  # List the source files to ensure they exist
-          echo "Copying files..."
-          cp ./pkg/apis/manager/v1beta1/python/api_pb2.py ./sdk/python/v1beta1/kubeflow/katib/katib_api_pb2.py && \
-          cp ./pkg/apis/manager/v1beta1/python/api_pb2_grpc.py ./sdk/python/v1beta1/kubeflow/katib/katib_api_pb2_grpc.py
-          
-          echo "Files after copying:"
-          ls -alh ./sdk/python/v1beta1/kubeflow/katib
-          
-          echo "Running sed to replace import statements..."
-          sed -i 's/import api_pb2 as api__pb2/from . import katib_api_pb2 as api__pb2/' ./sdk/python/v1beta1/kubeflow/katib/katib_api_pb2_grpc.py
-          
-          echo "Contents of katib_api_pb2_grpc.py after sed:"
-          cat ./sdk/python/v1beta1/kubeflow/katib/katib_api_pb2_grpc.py
+#      - name: Prepare files
+#        run: |
+#          # Copy necessary files or perform setup
+#          echo "Working directory: $(pwd)"  # Print the working directory
+#          echo "List of files in current directory:"
+#          ls -alh ./pkg/apis/manager/v1beta1/python  # List the source files to ensure they exist
+#          echo "Copying files..."
+#          cp ./pkg/apis/manager/v1beta1/python/api_pb2.py ./sdk/python/v1beta1/kubeflow/katib/katib_api_pb2.py && \
+#          cp ./pkg/apis/manager/v1beta1/python/api_pb2_grpc.py ./sdk/python/v1beta1/kubeflow/katib/katib_api_pb2_grpc.py
+#
+#          echo "Files after copying:"
+#          ls -alh ./sdk/python/v1beta1/kubeflow/katib
+#
+#          echo "Running sed to replace import statements..."
+#          sed -i 's/import api_pb2 as api__pb2/from . import katib_api_pb2 as api__pb2/' ./sdk/python/v1beta1/kubeflow/katib/katib_api_pb2_grpc.py
+#
+#          echo "Contents of katib_api_pb2_grpc.py after sed:"
+#          cat ./sdk/python/v1beta1/kubeflow/katib/katib_api_pb2_grpc.py
 
       - name: Run experiment
+        shell: bash
         run: |
-          ./test/e2e/v1beta1/scripts/gh-actions/run-e2e-experiment-papermill.py --experiment-path ./examples/v1beta1/kubeflow-pipelines/early-stopping.ipynb --verbose  
+          ./test/e2e/v1beta1/scripts/gh-actions/run-e2e-tune-api.sh
 
       - name: Clean up
         run: |
