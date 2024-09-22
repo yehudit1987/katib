@@ -1,52 +1,59 @@
 name: Run Experiment
 
 on:
-  push:
-  pull_request:
-  workflow_dispatch:
+  push: {}
+  pull_request: {}
+  workflow_dispatch: {}
+
+inputs:
+  experiments:
+    required: false
+    description: early-stopping.ipynb, early-stopping_output.ipynb, kubeflow-e2e-mnist.ipynb, mpi-job-horovod.py
+    default: ""
+#  training-operator:
+#    required: false
+#    description: whether to deploy training-operator or not
+#    default: false
+#  trial-images:
+#    required: false
+#    description: comma delimited trial image name
+#    default: ""
+#  katib-ui:
+#    required: true
+#    description: whether to deploy katib-ui or not
+#    default: false
+#  database-type:
+#    required: false
+#    description: mysql or postgres
+#    default: mysql
+#  tune-api:
+#    required: true
+#    description: whether to execute tune-api test or not
+#    default: false
 
 jobs:
   run-experiment:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/checkout@v4
-        with:
-          python-version: '3.9'  # Specify the Python version you need
-
-      - name: Print working directory
-        run: |
-            pwd
-
-#      - name: Prepare files
-#        run: |
-#          # Copy necessary files or perform setup
-#          echo "Working directory: $(pwd)"  # Print the working directory
-#          echo "List of files in current directory:"
-#          ls -alh ./pkg/apis/manager/v1beta1/python  # List the source files to ensure they exist
-#          echo "Copying files..."
-#          cp ./pkg/apis/manager/v1beta1/python/api_pb2.py ./sdk/python/v1beta1/kubeflow/katib/katib_api_pb2.py && \
-#          cp ./pkg/apis/manager/v1beta1/python/api_pb2_grpc.py ./sdk/python/v1beta1/kubeflow/katib/katib_api_pb2_grpc.py
-#
-#          echo "Files after copying:"
-#          ls -alh ./sdk/python/v1beta1/kubeflow/katib
-#
-#          echo "Running sed to replace import statements..."
-#          sed -i 's/import api_pb2 as api__pb2/from . import katib_api_pb2 as api__pb2/' ./sdk/python/v1beta1/kubeflow/katib/katib_api_pb2_grpc.py
-#
-#          echo "Contents of katib_api_pb2_grpc.py after sed:"
-#          cat ./sdk/python/v1beta1/kubeflow/katib/katib_api_pb2_grpc.py
-
-      - name: Run experiment
+      - name: Set Up Environment
         shell: bash
         run: |
-          ./test/e2e/v1beta1/scripts/gh-actions/run-e2e-tune-api.sh
+          # Define the experiments as a comma-separated string
+          EXPERIMENTS="early-stopping.ipynb,early-stopping_output.ipynb,kubeflow-e2e-mnist.ipynb,mpi-job-horovod.py"
+          echo "EXPERIMENTS=$EXPERIMENTS" >> $GITHUB_ENV
+      - name: Setup Minikube Cluster
+        shell: bash
+        run: ./test/e2e/v1beta1/scripts/gh-actions/setup-minikube.sh
 
-      - name: Clean up
+      - name: Setup Katib
+        shell: bash
+        run: ./test/e2e/v1beta1/scripts/gh-actions/setup-katib.sh
+
+      - name: Run E2E Experiment
+        shell: bash
         run: |
-          rm ./sdk/python/v1beta1/kubeflow/katib/katib_api_pb2.py ./sdk/python/v1beta1/kubeflow/katib/katib_api_pb2_grpc.py
-          echo "Cleanup if needed"
+          if "${{ inputs.tune-api }}"; then
+            ./test/e2e/v1beta1/scripts/gh-actions/run-e2e-tune-api.sh
+          else
+            ./test/e2e/v1beta1/scripts/gh-actions/run-e2e-experiment-papermill.sh "$EXPERIMENTS"
+          fi

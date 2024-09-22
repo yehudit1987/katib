@@ -1,22 +1,20 @@
-# This shell script is used to run Katib Experiment.
-# Input parameter - path to Experiment yaml.
+#!/bin/bash
 
-set -o errexit
-set -o nounset
-set -o pipefail
+# Get the input experiments string
+EXPERIMENTS="$1"
 
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/../../../../examples/v1beta1/kubeflow-pipelines/" || exit 1
+echo "Current directory: $(pwd)"
+echo "Directory contents:"
+ls -l
 
-echo "Katib deployments"
-kubectl -n kubeflow get deploy
-echo "Katib services"
-kubectl -n kubeflow get svc
-echo "Katib pods"
-kubectl -n kubeflow get pod
-echo "Katib persistent volume claims"
-kubectl get pvc -n kubeflow
-echo "Available CRDs"
-kubectl get crd
+# Split the string into an array
+IFS=',' read -r -a EXP_ARRAY <<< "$EXPERIMENTS"
 
-python run-e2e-experiment-papermill.py --namespace default \
---verbose || (kubectl get pods -n kubeflow && exit 1)
+# Loop through each experiment and run the Python script
+for EXP in "${EXP_ARRAY[@]}"; do
+  echo "Running experiment: $EXP"
+
+  # Call the Python script for each experiment
+  python run-e2e-experiment-papermill.py "$EXP" --verbose
+done
