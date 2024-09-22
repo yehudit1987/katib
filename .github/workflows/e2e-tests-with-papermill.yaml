@@ -22,10 +22,6 @@ jobs:
         run: |
             pwd
 
-#      - name: Install dependencies
-#        run: |
-#          pip install -r requirements.txt  # Adjust this if you have a different requirements file
-
       - name: Prepare files
         run: |
           # Copy necessary files or perform setup
