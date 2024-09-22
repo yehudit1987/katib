@@ -1,0 +1,44 @@
+name: Run Experiment
+
+on:
+  push:
+    branches:
+      - main  # Change this to your target branch
+  pull_request:
+
+jobs:
+  run-experiment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/checkout@v4
+        with:
+          python-version: '3.9'  # Specify the Python version you need
+
+      - name: Print working directory
+        run: |
+            pwd
+
+#      - name: Install dependencies
+#        run: |
+#          pip install -r requirements.txt  # Adjust this if you have a different requirements file
+
+      - name: Prepare files
+        run: |
+          # Copy necessary files or perform setup
+          cp ./pkg/apis/manager/v1beta1/python/api_pb2.py ./sdk/python/v1beta1/kubeflow/katib/katib_api_pb2.py && \
+          cp ./pkg/apis/manager/v1beta1/python/api_pb2_grpc.py ./sdk/python/v1beta1/kubeflow/katib/katib_api_pb2_grpc.py && \
+          sed -i 's/import api_pb2 as api__pb2/from . import katib_api_pb2 as api__pb2/' ./sdk/python/v1beta1/kubeflow/katib/katib_api_pb2_grpc.py
+
+      - name: Run experiment
+        run: |
+          ./test/e2e/v1beta1/scripts/gh-actions/run-e2e-experiment-papermill.py --experiment-path ./examples/v1beta1/kubeflow-pipelines/early-stopping.ipynb --verbose  
+
+      - name: Clean up
+        run: |
+          rm ./sdk/python/v1beta1/kubeflow/katib/katib_api_pb2.py ./sdk/python/v1beta1/kubeflow/katib/katib_api_pb2_grpc.py
+          echo "Cleanup if needed"
