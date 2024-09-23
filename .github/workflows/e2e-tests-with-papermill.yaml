@@ -47,5 +47,5 @@ jobs:
       - name: Run experiment
         shell: bash
         run: |
-          ./test/e2e/v1beta1/scripts/gh-actions/run-e2e-experiment-papermill.sh "$EXPERIMENTS"
+          ./test/e2e/v1beta1/scripts/gh-actions/run-e2e-tests-papermill.sh "$EXPERIMENTS"
 

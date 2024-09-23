@@ -16,5 +16,5 @@ for EXP in "${EXP_ARRAY[@]}"; do
   echo "Running experiment: $EXP"
 
   # Call the Python script for each experiment
-  python run-e2e-experiment-papermill.py "$EXP" --verbose
+  python run-e2e-tests-papermill.py "$EXP" --verbose
 done
