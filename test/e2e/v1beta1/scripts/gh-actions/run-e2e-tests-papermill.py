@@ -102,8 +102,10 @@ def main():
 
     if success:
         logging.info("E2E test passed.")
+        exit(0)
     else:
         logging.info("E2E test failed.")
+        exit(1)
 
 
 if __name__ == "__main__":
