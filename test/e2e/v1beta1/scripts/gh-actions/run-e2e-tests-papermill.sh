@@ -3,7 +3,7 @@
 # Get the input experiments string
 EXPERIMENTS="$1"
 
-cd "$(dirname "$0")/../../../../examples/v1beta1/kubeflow-pipelines/" || exit 1
+cd "./examples/v1beta1/kubeflow-pipelines/" || exit 1
 echo "Current directory: $(pwd)"
 echo "Directory contents:"
 ls -l
