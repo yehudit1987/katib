@@ -70,7 +70,13 @@ def main():
         handlers=[logging.StreamHandler(sys.stdout)]
     )
 
+    # Log the current environment and paths
+    logging.info("Current environment:")
+    logging.info(os.environ)
 
+    # Check available Jupyter kernels
+    logging.info("Available Jupyter kernels:")
+    os.system("jupyter kernelspec list")
     #TODO: Later to be implement as part of git job
     # source_path_api_pb2 = "pkg/apis/manager/v1beta1/python/api_pb2.py"
     # destination_path_katib_api_pb2 = "sdk/python/v1beta1/kubeflow/katib/katib_api_pb2.py"
