@@ -44,6 +44,9 @@ jobs:
           sudo apt-get install tree
           tree
 
+      - name: Grant execute permission to the script
+        run: chmod +x ./test/e2e/v1beta1/scripts/gh-actions/run-e2e-tests-papermill.sh
+
       - name: Run experiment
         shell: bash
         run: |
