@@ -18,6 +18,10 @@ jobs:
         with:
           python-version: '3.9'
 
+      - name: Setup Minikube Cluster
+        shell: bash
+        run: ./test/e2e/v1beta1/scripts/gh-actions/setup-minikube.sh
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
