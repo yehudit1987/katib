@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Get the input experiments string
+EXPERIMENTS="$1"
+
+cd "$(dirname "$0")/../../../../examples/v1beta1/kubeflow-pipelines/" || exit 1
+echo "Current directory: $(pwd)"
+echo "Directory contents:"
+ls -l
+
+# Split the string into an array
+IFS=',' read -r -a EXP_ARRAY <<< "$EXPERIMENTS"
+
+# Loop through each experiment and run the Python script
+for EXP in "${EXP_ARRAY[@]}"; do
+  echo "Running experiment: $EXP"
+
+  # Call the Python script for each experiment
+  python run-e2e-experiment-papermill.py "$EXP" --verbose
+done
