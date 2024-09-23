@@ -11,7 +11,7 @@ ls -l
 # Split the string into an array
 IFS=',' read -r -a EXP_ARRAY <<< "$EXPERIMENTS"
 
-cd "../../test/e2e/v1beta1/scripts/gh-actions/" || exit 1
+cd "../../../test/e2e/v1beta1/scripts/gh-actions/" || exit 1
 echo "Changed to tests directory: $(pwd)"
 echo "Directory contents:"
 ls -l
