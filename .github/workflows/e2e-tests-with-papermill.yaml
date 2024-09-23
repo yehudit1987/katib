@@ -32,10 +32,17 @@ jobs:
           # Convert comma-separated string to an array
           IFS=',' read -r -a EXPERIMENTS_ARRAY <<< "$EXPERIMENTS"
           echo "EXPERIMENTS_ARRAY=${EXPERIMENTS_ARRAY[@]}" >> $GITHUB_ENV
+          echo "experiments are = $EXPERIMENTS"
 
       - name: Print working directory
         run: |
           pwd
+
+      - name: Print directory tree
+        run: |
+          sudo apt-get update
+          sudo apt-get install tree
+          tree
 
       - name: Run experiment
         shell: bash
