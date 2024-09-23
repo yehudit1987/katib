@@ -29,9 +29,10 @@ jobs:
           # Define the experiments as a comma-separated string
           EXPERIMENTS="early-stopping.ipynb,early-stopping_output.ipynb,kubeflow-e2e-mnist.ipynb,mpi-job-horovod.py"
           
-          # Convert comma-separated string to an array
-          IFS=',' read -r -a EXPERIMENTS_ARRAY <<< "$EXPERIMENTS"
-          echo "EXPERIMENTS_ARRAY=${EXPERIMENTS_ARRAY[@]}" >> $GITHUB_ENV
+#          # Convert comma-separated string to an array
+#          IFS=',' read -r -a EXPERIMENTS_ARRAY <<< "$EXPERIMENTS"
+#          echo "EXPERIMENTS_ARRAY=${EXPERIMENTS_ARRAY[@]}" >> $GITHUB_ENV
+          echo "EXPERIMENTS=$EXPERIMENTS" >> $GITHUB_ENV
           echo "experiments are = $EXPERIMENTS"
 
       - name: Print working directory
