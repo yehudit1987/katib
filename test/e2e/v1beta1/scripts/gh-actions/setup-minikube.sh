@@ -26,6 +26,11 @@ TUNE_API=${2:-false}
 TRIAL_IMAGES=${3:-""}
 EXPERIMENTS=${4:-""}
 
+if ! minikube status | grep -q "Running"; then
+    echo "Starting Minikube..."
+    minikube start --memory=4g --cpus=2
+fi
+
 echo "Start to setup Minikube Kubernetes Cluster"
 kubectl version
 kubectl cluster-info
