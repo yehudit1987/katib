@@ -25,7 +25,8 @@ jobs:
 
       - name: setup katib
         run: |
-          ./test/e2e/v1beta1/scripts/gh-actions/setup-katib.sh
+          chmod +x ./test/e2e/v1beta1/scripts/gh-actions/new-setup-katib.sh
+          ./test/e2e/v1beta1/scripts/gh-actions/new-setup-katib.sh
 
       - name: setup pipelines
         run: |
