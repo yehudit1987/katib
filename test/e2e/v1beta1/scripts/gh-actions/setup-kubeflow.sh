@@ -57,14 +57,54 @@ cd kubeflow-manifests
 # Checkout the specific Kubeflow version
 git checkout $KUBEFLOW_VERSION
 
+# Function to check if the CRD is established
+check_crd_established() {
+    local crd=$1
+    local timeout=60
+    local interval=5
+
+    for ((i=0; i<timeout; i+=interval)); do
+        if kubectl get crd "${crd}" &> /dev/null; then
+            if kubectl get crd "${crd}" -o jsonpath='{.status.conditions[?(@.type=="Established")].status}' | grep -q "True"; then
+                return 0
+            fi
+        fi
+        sleep "${interval}"
+    done
+    return 1  # CRD not established
+}
+
+# Function to apply a component
+apply_component() {
+    local crds=("${!1}")
+    local component_path=$2
+
+    for crd in "${crds[@]}"; do
+        echo "Waiting for CRD ${crd} to be established..."
+        if check_crd_established "${crd}"; then
+            echo "CRD ${crd} is established."
+        else
+            echo "Timed out waiting for CRD ${crd} to be established."
+            exit 1
+        fi
+    done
+
+    # Now apply the corresponding resources
+    kubectl apply -k ${component_path}
+}
+
 # Apply essential components
 kubectl apply -k common/kubeflow-namespace/base
+kubectl apply -k common/kubeflow-roles/base
+
 kubectl apply -k common/cert-manager/cert-manager/base
 kubectl apply -k common/istio-1-22/istio-crds/base
 kubectl apply -k common/istio-1-22/istio-namespace/base
 kubectl apply -k common/istio-1-22/istio-install/base
 kubectl apply -k common/dex/overlays/istio
-kubectl apply -k apps/pipeline/upstream/env/platform-agnostic-multi-user
+apply_component \
+    "('compositecontrollers.metacontroller.k8s.io')" \
+    "apps/pipeline/upstream/env/platform-agnostic-multi-user"
 kubectl apply -k apps/katib/upstream/installs/katib-standalone
 
 # Wait for all pods to be running
