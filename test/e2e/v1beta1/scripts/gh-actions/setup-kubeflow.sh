@@ -99,6 +99,22 @@ for deployment in $(kubectl -n kubeflow get deploy -o jsonpath='{.items[*].metad
     echo "-------------------------------------------------------------------------------------"
     echo "Describing deployment: $deployment"
     kubectl -n kubeflow describe deployment $deployment
+
+    # Fetch the associated replica sets for more details (like SCC issues)
+    for replicaset in $(kubectl -n kubeflow get rs -l "app.kubernetes.io/name=$deployment" -o jsonpath='{.items[*].metadata.name}'); do
+        echo "Describing replica set: $replicaset"
+        kubectl -n kubeflow describe rs $replicaset
+    done
+
+    # Fetch pods managed by this deployment to check for pod-level issues
+    for pod in $(kubectl -n kubeflow get pods -l "app.kubernetes.io/name=$deployment" -o jsonpath='{.items[*].metadata.name}'); do
+        echo "Describing pod: $pod"
+        kubectl -n kubeflow describe pod $pod
+
+        # Capture logs of the pod if it's not running properly
+        echo "Fetching logs for pod: $pod"
+        kubectl -n kubeflow logs $pod
+    done
     echo "-------------------------------------------------------------------------------------"
 done
 
