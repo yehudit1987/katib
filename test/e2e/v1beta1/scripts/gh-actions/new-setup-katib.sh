@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Define the namespace and Katib version
+# Define variables
+KUSTOMIZATION_FILE="../../../../../manifests/v1beta1/installs/katib-standalone/kustomization.yaml"
 KATIB_NAMESPACE="kubeflow"
-KATIB_VERSION="v0.15.0"  # Change this to the desired version
 
 # Check if kubectl is installed
 if ! command -v kubectl &> /dev/null
@@ -11,15 +11,22 @@ then
     exit 1
 fi
 
+# Check if kustomize is installed
+if ! command -v kustomize &> /dev/null
+then
+    echo "kustomize not found. Please install kustomize to use this script."
+    exit 1
+fi
+
 echo "Creating Katib namespace..."
 kubectl create namespace $KATIB_NAMESPACE || echo "Namespace $KATIB_NAMESPACE already exists"
 
-# Deploy Katib manifests from the official Kubeflow repository
-echo "Deploying Katib manifests for version $KATIB_VERSION..."
+# Apply Katib manifests using kustomize
+echo "Applying Katib manifests using Kustomize from $KUSTOMIZATION_FILE..."
 
-kubectl apply -n $KATIB_NAMESPACE -f https://raw.githubusercontent.com/kubeflow/katib/$KATIB_VERSION/manifests/v1beta1/installs/katib-install.yaml
+kustomize build $KUSTOMIZATION_FILE | kubectl apply -n $KATIB_NAMESPACE -f -
 
-# Check if Katib pods are running
+# Wait for deployments to roll out
 echo "Waiting for Katib pods to be ready..."
 
 kubectl rollout status -n $KATIB_NAMESPACE deployment/katib-controller
