@@ -16,8 +16,6 @@ echo "Creating Kind cluster: $CLUSTER_NAME"
 cat <<EOF | kind create cluster --name "$CLUSTER_NAME" --config=-
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
-networking:
-  disableDefaultCNI: true
 EOF
 
 echo "Kind cluster '$CLUSTER_NAME' created successfully."
