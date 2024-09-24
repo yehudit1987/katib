@@ -91,6 +91,17 @@ apply_component "common/dex/overlays/istio"
 apply_component "apps/pipeline/upstream/env/platform-agnostic-multi-user"
 apply_component "apps/katib/upstream/installs/katib-standalone"
 
+echo "Kubeflow deployments:"
+kubectl -n kubeflow get deploy
+
+# Describe each deployment in the kubeflow namespace
+for deployment in $(kubectl -n kubeflow get deploy -o jsonpath='{.items[*].metadata.name}'); do
+    echo "-------------------------------------------------------------------------------------"
+    echo "Describing deployment: $deployment"
+    kubectl -n kubeflow describe deployment $deployment
+    echo "-------------------------------------------------------------------------------------"
+done
+
 # Wait for all pods to be running
 echo "Waiting for Kubeflow components to be ready..."
 kubectl wait --for=condition=ready pod --all --timeout=600s -n kubeflow
