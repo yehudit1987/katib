@@ -58,54 +58,38 @@ cd kubeflow-manifests
 git checkout $KUBEFLOW_VERSION
 
 # Function to check if the CRD is established
-check_crd_established() {
-    local crd=$1
-    local timeout=60
-    local interval=5
-
-    for ((i=0; i<timeout; i+=interval)); do
-        if kubectl get crd "${crd}" &> /dev/null; then
-            if kubectl get crd "${crd}" -o jsonpath='{.status.conditions[?(@.type=="Established")].status}' | grep -q "True"; then
-                return 0
-            fi
-        fi
-        sleep "${interval}"
-    done
-    return 1  # CRD not established
-}
-
-# Function to apply a component
 apply_component() {
-    local crds=("${!1}")
-    local component_path=$2
+    local component_path="$1"
+    local max_retries=3
+    local delay=30
 
-    for crd in "${crds[@]}"; do
-        echo "Waiting for CRD ${crd} to be established..."
-        if check_crd_established "${crd}"; then
-            echo "CRD ${crd} is established."
+    echo "Applying component from path: $component_path"
+
+    for ((i=0; i<max_retries; i++)); do
+        # Attempt to apply the component
+        if kustomize build "$component_path" | kubectl apply -f -; then
+            echo "Successfully applied component: $component_path"
+            return 0
         else
-            echo "Timed out waiting for CRD ${crd} to be established."
-            exit 1
+            echo "Failed to apply component: $component_path. Attempt $((i+1))/$max_retries."
+            sleep "$delay"
         fi
     done
 
-    # Now apply the corresponding resources
-    kubectl apply -k ${component_path}
+    echo "Exceeded maximum retries for component: $component_path"
+    return 1
 }
 
 # Apply essential components
-kubectl apply -k common/kubeflow-namespace/base
-kubectl apply -k common/kubeflow-roles/base
-
-kubectl apply -k common/cert-manager/cert-manager/base
-kubectl apply -k common/istio-1-22/istio-crds/base
-kubectl apply -k common/istio-1-22/istio-namespace/base
-kubectl apply -k common/istio-1-22/istio-install/base
-kubectl apply -k common/dex/overlays/istio
-apply_component \
-    "('compositecontrollers.metacontroller.k8s.io')" \
-    "apps/pipeline/upstream/env/platform-agnostic-multi-user"
-kubectl apply -k apps/katib/upstream/installs/katib-standalone
+apply_component "common/kubeflow-namespace/base"
+apply_component "common/kubeflow-roles/base"
+apply_component "common/cert-manager/cert-manager/base"
+apply_component "common/istio-1-22/istio-crds/base"
+apply_component "common/istio-1-22/istio-namespace/base"
+apply_component "common/istio-1-22/istio-install/base"
+apply_component "common/dex/overlays/istio"
+apply_component "apps/pipeline/upstream/env/platform-agnostic-multi-user"
+apply_component "apps/katib/upstream/installs/katib-standalone"
 
 # Wait for all pods to be running
 echo "Waiting for Kubeflow components to be ready..."
