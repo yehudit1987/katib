@@ -57,25 +57,15 @@ cd kubeflow-manifests
 # Checkout the specific Kubeflow version
 git checkout $KUBEFLOW_VERSION
 
-# Set the appropriate namespace for deployment
-KUSTOMIZE_DIR="common/kubeflow-namespace/base"
-kubectl apply -k $KUSTOMIZE_DIR
-
-# Deploy the required components in the following order
+# Apply essential components
+kubectl apply -k common/kubeflow-namespace/base
 kubectl apply -k common/cert-manager/cert-manager/base
 kubectl apply -k common/istio-1-22/istio-crds/base
 kubectl apply -k common/istio-1-22/istio-namespace/base
 kubectl apply -k common/istio-1-22/istio-install/base
 kubectl apply -k common/dex/overlays/istio
-kubectl apply -k common/oidc-authservice/base
-kubectl apply -k common/kubeflow-roles/base
-
-# Deploy individual Kubeflow components
 kubectl apply -k apps/pipeline/upstream/env/platform-agnostic-multi-user
 kubectl apply -k apps/katib/upstream/installs/katib-standalone
-kubectl apply -k apps/jupyter/notebook-controller/upstream/overlays/kubeflow
-kubectl apply -k apps/training-operator/upstream/overlays/kubeflow
-kubectl apply -k apps/volumes-web-app/upstream/overlays/kubeflow
 
 # Wait for all pods to be running
 echo "Waiting for Kubeflow components to be ready..."
