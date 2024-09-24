@@ -26,6 +26,7 @@ TUNE_API=${2:-false}
 TRIAL_IMAGES=${3:-""}
 EXPERIMENTS=${4:-""}
 
+# Remove that if not be used.
 if ! minikube status | grep -q "Running"; then
     echo "Starting Minikube..."
     minikube start --memory=4g --cpus=2

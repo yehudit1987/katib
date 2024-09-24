@@ -18,9 +18,19 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Setup Minikube Cluster
+      - name: Set up Docker
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Kind Cluster
+        uses: helm/kind-action@v1
+        with:
+          version: v0.17.0
+          config: ./test/e2e/v1beta1/scripts/gh-actions/kind-config.yaml
+
+      - name: deploy kubeflow
         shell: bash
-        run: ./test/e2e/v1beta1/scripts/gh-actions/setup-minikube.sh
+        run: |
+          ./test/e2e/v1beta1/scripts/gh-actions/setup-kubeflow.sh
 
       - name: Install dependencies
         run: |
