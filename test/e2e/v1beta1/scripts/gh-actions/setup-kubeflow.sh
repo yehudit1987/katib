@@ -103,17 +103,21 @@ for namespace in $(kubectl get namespaces -o jsonpath='{.items[*].metadata.name}
     for replicaset in $(kubectl -n $namespace get rs -o jsonpath='{.items[*].metadata.name}'); do
         echo "Describing replica set: $replicaset"
         kubectl -n $namespace describe rs $replicaset
+
+        # Fetch events related to this ReplicaSet
+        echo "Events for ReplicaSet: $replicaset"
+        kubectl -n $namespace get events --field-selector involvedObject.kind=ReplicaSet,involvedObject.name=$replicaset
     done
 
     # Fetch pods managed by this deployment to check for pod-level issues
-    for pod in $(kubectl -n $namespace get pods -o jsonpath='{.items[*].metadata.name}'); do
-        echo "Describing pod: $pod"
-        kubectl -n $namespace describe pod $pod
-
-        # Capture logs of the pod if it's not running properly
-        echo "Fetching logs for pod: $pod"
-        kubectl -n $namespace logs $pod
-    done
+#    for pod in $(kubectl -n $namespace get pods -o jsonpath='{.items[*].metadata.name}'); do
+#        echo "Describing pod: $pod"
+#        kubectl -n $namespace describe pod $pod
+#
+#        # Capture logs of the pod if it's not running properly
+#        echo "Fetching logs for pod: $pod"
+#        kubectl -n $namespace logs $pod
+#    done
     echo "-------------------------------------------------------------------------------------"
 done
 
