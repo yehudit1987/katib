@@ -27,6 +27,9 @@ jobs:
           version: v0.17.0
           config: ./test/e2e/v1beta1/scripts/gh-actions/kind-config.yaml
 
+      - name: Grant execute permission to the script
+        run: chmod +x ./test/e2e/v1beta1/scripts/gh-actions/setup-kubeflow.sh
+
       - name: deploy kubeflow
         shell: bash
         run: |
