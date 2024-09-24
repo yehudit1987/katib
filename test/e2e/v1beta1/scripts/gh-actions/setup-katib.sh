@@ -61,6 +61,9 @@ if "$DEPLOY_TRAINING_OPERATOR"; then
   kustomize build "github.com/kubeflow/training-operator/manifests/overlays/standalone?ref=$TRAINING_OPERATOR_VERSION" | kubectl apply -f -
 fi
 
+echo "Checking for kubeflow namespace"
+kubectl get namespace kubeflow || kubectl create namespace kubeflow
+
 echo "Deploying Katib"
 cd ../../../../../ && WITH_DATABASE_TYPE=$WITH_DATABASE_TYPE make deploy && cd -
 
