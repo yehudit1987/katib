@@ -64,6 +64,7 @@ kubectl apply -k $KUSTOMIZE_DIR
 # Deploy the required components in the following order
 kubectl apply -k common/cert-manager/cert-manager/base
 kubectl apply -k common/istio-1-22/istio-crds/base
+kubectl apply -k common/istio-1-22/istio-namespace/base
 kubectl apply -k common/istio-1-22/istio-install/base
 kubectl apply -k common/dex/overlays/istio
 kubectl apply -k common/oidc-authservice/base
