@@ -18,6 +18,21 @@ jobs:
         with:
           python-version: '3.9'
 
+      - name: setup cluster
+        run: |
+          chmod +x ./test/e2e/v1beta1/scripts/gh-actions/create-cluster.sh
+          ./test/e2e/v1beta1/scripts/gh-actions/create-cluster.sh
+
+      - name: setup katib
+        run: |
+          ./test/e2e/v1beta1/scripts/gh-actions/setup-katib.sh
+
+      - name: setup pipelines
+        run: |
+          chmod +x ./test/e2e/v1beta1/scripts/gh-actions/setup-pipelines.sh
+          ./test/e2e/v1beta1/scripts/gh-actions/setup-pipelines.sh
+        
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
