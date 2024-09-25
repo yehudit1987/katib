@@ -28,15 +28,14 @@ PODS_READY=$(kubectl wait --for=condition=ready --timeout=$TIMEOUT pod --all -n 
 # Check if the command was successful
 if [ $? -ne 0 ]; then
   echo "Some pods did not reach the Ready state within the timeout. Checking events and logs..."
+  DEPLOYMENTS=$(kubectl get deployments -n kubeflow --no-headers -o custom-columns=":metadata.name")
 
-  for replicaset in $(kubectl -n $KATIB_NAMESPACE get rs -o jsonpath='{.items[*].metadata.name}'); do
-        echo "----------------------Describing replica set--------------------------------------: $replicaset"
-        kubectl -n $KATIB_NAMESPACE describe rs $replicaset
-
-        # Fetch events related to this ReplicaSet
-        echo "Events for ReplicaSet: $replicaset"
-        kubectl -n $KATIB_NAMESPACE get events --field-selector involvedObject.kind=ReplicaSet,involvedObject.name=$replicaset
-    done
+  for DEPLOYMENT in $DEPLOYMENTS; do
+    echo "----------------------------Checking deployment: $DEPLOYMENT ---------------------------------------------"
+    echo "----------------------- deployment describe --------------------------------------------------------------"
+    kubectl describe deployment $DEPLOYMENT -n $KATIB_NAMESPACE
+    echo "----------------------- deployment events ----------------------------------------------------------------"
+    kubectl events deployment $DEPLOYMENT -n $KATIB_NAMESPACE
   done
   exit 1
 
