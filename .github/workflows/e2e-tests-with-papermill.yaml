@@ -18,15 +18,19 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: setup cluster
-        run: |
-          chmod +x ./test/e2e/v1beta1/scripts/gh-actions/create-cluster.sh
-          ./test/e2e/v1beta1/scripts/gh-actions/create-cluster.sh
+#      - name: setup cluster
+#        run: |
+#          chmod +x ./test/e2e/v1beta1/scripts/gh-actions/create-cluster.sh
+#          ./test/e2e/v1beta1/scripts/gh-actions/create-cluster.sh
+#
+#      - name: setup katib
+#        run: |
+#          chmod +x ./test/e2e/v1beta1/scripts/gh-actions/new-setup-katib.sh
+#          ./test/e2e/v1beta1/scripts/gh-actions/new-setup-katib.sh
 
-      - name: setup katib
+      - name: setup cluster & katib
         run: |
-          chmod +x ./test/e2e/v1beta1/scripts/gh-actions/new-setup-katib.sh
-          ./test/e2e/v1beta1/scripts/gh-actions/new-setup-katib.sh
+          ./examples/v1beta1/kind-cluster/deploy.sh
 
       - name: setup pipelines
         run: |
