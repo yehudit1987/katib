@@ -29,21 +29,13 @@ PODS_READY=$(kubectl wait --for=condition=ready --timeout=$TIMEOUT pod --all -n 
 if [ $? -ne 0 ]; then
   echo "Some pods did not reach the Ready state within the timeout. Checking events and logs..."
 
-  # Loop over each deployment that timed out and print logs and events
-  DEPLOYMENTS=$(kubectl get deployments -n kubeflow --no-headers -o custom-columns=":metadata.name")
+  for replicaset in $(kubectl -n $KATIB_NAMESPACE get rs -o jsonpath='{.items[*].metadata.name}'); do
+        echo "----------------------Describing replica set--------------------------------------: $replicaset"
+        kubectl -n $KATIB_NAMESPACE describe rs $replicaset
 
-  for DEPLOYMENT in $DEPLOYMENTS; do
-    echo "Checking deployment: $DEPLOYMENT"
-
-    # Get the pods for the current deployment
-    PODS=$(kubectl get pods -n kubeflow -l app=$DEPLOYMENT -o jsonpath='{.items[*].metadata.name}')
-
-    for POD in $PODS; do
-      echo "Events for pod: $POD"
-      kubectl describe pod $POD -n kubeflow | grep -A 10 "Events"
-
-      echo "Logs for pod: $POD"
-      kubectl logs $POD -n kubeflow
+        # Fetch events related to this ReplicaSet
+        echo "Events for ReplicaSet: $replicaset"
+        kubectl -n $KATIB_NAMESPACE get events --field-selector involvedObject.kind=ReplicaSet,involvedObject.name=$replicaset
     done
   done
   exit 1
