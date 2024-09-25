@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define variables
-KUSTOMIZATION_FILE="manifests/v1beta1/installs/katib-standalone/"
+KUSTOMIZATION_PATH="manifests/v1beta1/installs/katib-standalone/"
 KATIB_NAMESPACE="kubeflow"
 
 # Check if kubectl is installed
@@ -11,30 +11,44 @@ then
     exit 1
 fi
 
-# Check if kustomize is installed
-if ! command -v kustomize &> /dev/null
-then
-    echo "kustomize not found. Please install kustomize to use this script."
-    exit 1
-fi
-
 echo "Creating Katib namespace..."
 kubectl create namespace $KATIB_NAMESPACE || echo "Namespace $KATIB_NAMESPACE already exists"
 
 # Apply Katib manifests using kustomize
-echo "Applying Katib manifests using Kustomize from $KUSTOMIZATION_FILE..."
+echo "Applying Katib manifests..."
+kubectl apply -k $KUSTOMIZATION_PATH
 
-kustomize build $KUSTOMIZATION_FILE | kubectl apply -n $KATIB_NAMESPACE -f -
 
-# Wait for deployments to roll out
 echo "Waiting for Katib pods to be ready..."
+TIMEOUT=180s
 
-kubectl rollout status -n $KATIB_NAMESPACE deployment/katib-controller
-kubectl rollout status -n $KATIB_NAMESPACE deployment/katib-db-manager
-kubectl rollout status -n $KATIB_NAMESPACE deployment/katib-ui
+# Wait for all pods in the kubeflow namespace to be in the Ready state
+PODS_READY=$(kubectl wait --for=condition=ready --timeout=$TIMEOUT pod --all -n kubeflow)
 
-# Confirm that all pods are running
-echo "Checking the status of Katib pods..."
-kubectl get pods -n $KATIB_NAMESPACE
+# Check if the command was successful
+if [ $? -ne 0 ]; then
+  echo "Some pods did not reach the Ready state within the timeout. Checking events and logs..."
 
-echo "Katib deployment complete!"
+  # Loop over each deployment that timed out and print logs and events
+  DEPLOYMENTS=$(kubectl get deployments -n kubeflow --no-headers -o custom-columns=":metadata.name")
+
+  for DEPLOYMENT in $DEPLOYMENTS; do
+    echo "Checking deployment: $DEPLOYMENT"
+
+    # Get the pods for the current deployment
+    PODS=$(kubectl get pods -n kubeflow -l app=$DEPLOYMENT -o jsonpath='{.items[*].metadata.name}')
+
+    for POD in $PODS; do
+      echo "Events for pod: $POD"
+      kubectl describe pod $POD -n kubeflow | grep -A 10 "Events"
+
+      echo "Logs for pod: $POD"
+      kubectl logs $POD -n kubeflow
+    done
+  done
+  exit 1
+
+else
+  echo "All Katib pods are ready!"
+fi
+
