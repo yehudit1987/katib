@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define variables
-KUSTOMIZATION_FILE="../../../../../manifests/v1beta1/installs/katib-standalone/kustomization.yaml"
+KUSTOMIZATION_FILE="manifests/v1beta1/installs/katib-standalone/kustomization.yaml"
 KATIB_NAMESPACE="kubeflow"
 
 # Check if kubectl is installed
