@@ -40,28 +40,26 @@ podman_version=$(podman --version | awk '{print $2}')
 # Minimum required version for Minikube (replace with your desired version)
 min_podman_version="4.9.0"
 
-# Check if upgrade is needed
-if [[ "$(semver -compare "$podman_version" "$min_podman_version")" == "less than" ]]; then
-  echo "Podman version $podman_version is outdated. Minimum required version is $min_podman_version."
 
-  # Choose upgrade method based on your system
-  # Option 1: Using package manager (replace commands for your system)
-  if [ -x "$(command -v apt-get)" ]; then
-    echo "Upgrading Podman using apt-get..."
-    sudo apt-get update
-    sudo apt-get install -y podman
-  elif [ -x "$(command -v dnf)" ]; then
-    echo "Upgrading Podman using dnf..."
-    sudo dnf upgrade podman -y
-  else
-    echo "Package manager not found. Skipping upgrade."
-  fi
+
+# Choose upgrade method based on your system
+# Option 1: Using package manager (replace commands for your system)
+if [ -x "$(command -v apt-get)" ]; then
+  echo "Upgrading Podman using apt-get..."
+  sudo apt-get update
+  sudo apt-get install -y podman
+elif [ -x "$(command -v dnf)" ]; then
+  echo "Upgrading Podman using dnf..."
+  sudo dnf upgrade podman -y
+else
+  echo "Package manager not found. Skipping upgrade."
+fi
 
   # Option 2: Manual installation (uncomment and replace URLs)
   # curl -LO https://github.com/containers/podman/releases/latest/download/podman-linux-amd64  # Replace URL
   # chmod +x podman-linux-amd64
   # sudo mv podman-linux-amd64 /usr/local/bin/podman
-fi
+
 
 echo "Checking Minikube Kubernetes Cluster"
 check_minikube
