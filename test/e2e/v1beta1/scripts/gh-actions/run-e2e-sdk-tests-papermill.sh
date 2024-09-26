@@ -15,7 +15,7 @@ for EXP in "${EXP_ARRAY[@]}"; do
   echo "Running experiment: $EXP"
 
   # Call the Python script for each experiment
-  python3 ./test/e2e/v1beta1/scripts/gh-actions/run-e2e-tests-papermill.py --experiment-path "examples/v1beta1/kubeflow-pipelines/$EXP" --verbose || {
+  python3 ./test/e2e/v1beta1/scripts/gh-actions/run-e2e-sdk-tests-papermill.py --experiment-path "examples/v1beta1/kubeflow-pipelines/$EXP" --verbose || {
       echo "Python script failed for experiment: $EXP"
       exit 1
   }

@@ -65,5 +65,5 @@ jobs:
 
       - name: Run experiment
         run: |
-          chmod +x ./test/e2e/v1beta1/scripts/gh-actions/run-e2e-tests-papermill.sh
-          ./test/e2e/v1beta1/scripts/gh-actions/run-e2e-tests-papermill.sh "$EXPERIMENTS"
+          chmod +x ./test/e2e/v1beta1/scripts/gh-actions/run-e2e-sdk-tests-papermill.sh
+          ./test/e2e/v1beta1/scripts/gh-actions/run-e2e-sdk-tests-papermill.sh "$EXPERIMENTS"
