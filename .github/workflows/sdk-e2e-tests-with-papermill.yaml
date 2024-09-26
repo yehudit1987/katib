@@ -20,7 +20,7 @@ jobs:
 
       - name: Setup Minikube Cluster
         shell: bash
-        run: ./test/e2e/v1beta1/scripts/gh-actions/setup-minikube.sh true false "" "" true
+        run: ./test/e2e/v1beta1/scripts/gh-actions/setup-minikube.sh true false "" "" false
 
       - name: Setup Katib
         shell: bash

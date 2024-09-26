@@ -34,12 +34,12 @@ function check_minikube() {
     if [[ "$GPU_REQUIRED" == "true" ]]; then
       echo "Minikube is not running. Starting Minikube with GPU support..."
       # Start Minikube with GPU support
-      minikube start --driver=docker
+      minikube start --driver=kvm2
       # Enable the NVIDIA GPU device plugin
       minikube addons enable nvidia-gpu-device-plugin
     else
       echo "Minikube is not running. Starting Minikube without GPU support..."
-      minikube start --driver=docker
+      minikube start --driver=kvm2
     fi
   fi
 }
