@@ -31,11 +31,33 @@ function check_minikube() {
     echo "Minikube is already running."
   else
     echo "Minikube is not running. Starting Minikube..."
-    minikube start --gpus all
+    minikube start --gpus 1
+  fi
+}
+# Function to install necessary tools
+function install_tools() {
+  # Check if Docker is installed
+  if ! command -v docker &> /dev/null; then
+    echo "Docker is not installed. Please install it first."
+    exit 1
+  fi
+
+  # Check if Minikube is installed
+  if ! command -v minikube &> /dev/null; then
+    echo "Minikube is not installed. Please install it first."
+    exit 1
+  fi
+
+  # Install kubectl (if not already installed)
+  if ! command -v kubectl &> /dev/null; then
+    curl -LO https://dl.k8s.io/release/$(kubectl version --client | grep "Client Version:" | awk '{print $3}')/bin/linux/amd64/kubectl
+    chmod +x kubectl
+    sudo mv kubectl /usr/local/bin
   fi
 }
 
 echo "Checking Minikube Kubernetes Cluster"
+install_tools
 check_minikube
 
 echo "Kubernetes cluster is up and running"
