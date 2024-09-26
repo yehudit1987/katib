@@ -68,7 +68,14 @@ cd ../../../../../ && WITH_DATABASE_TYPE=$WITH_DATABASE_TYPE make deploy && cd -
 TIMEOUT=120s
 
 kubectl wait --for=condition=ContainersReady=True --timeout=${TIMEOUT} -l "katib.kubeflow.org/component in ($WITH_DATABASE_TYPE,controller,db-manager,ui)" -n kubeflow pod ||
-  (kubectl get pods -n kubeflow && kubectl describe pods -n kubeflow && exit 1)
+  (kubectl get pods -n kubeflow && kubectl describe pods -n kubeflow ) #&& exit 1 - add later
+
+#add debug - remove later
+echo "Gathering logs from failed pods:"
+for pod in $(kubectl get pods -n kubeflow -o jsonpath='{.items[?(@.status.phase!="Running")].metadata.name}'); do
+  echo "Logs for pod $pod:"
+  kubectl logs "$pod" -n kubeflow || echo "Failed to get logs for $pod"
+done
 
 echo "All Katib components are running."
 echo "Katib deployments"
