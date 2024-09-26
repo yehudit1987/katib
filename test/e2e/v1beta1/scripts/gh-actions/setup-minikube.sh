@@ -25,8 +25,29 @@ DEPLOY_KATIB_UI=${1:-false}
 TUNE_API=${2:-false}
 TRIAL_IMAGES=${3:-""}
 EXPERIMENTS=${4:-""}
+GPU_REQUIRED=${5:-false}
 
-echo "Start to setup Minikube Kubernetes Cluster"
+function check_minikube() {
+  if minikube status >/dev/null 2>&1; then
+    echo "Minikube is already running."
+  else
+    if [[ "$GPU_REQUIRED" == "true" ]]; then
+      echo "Minikube is not running. Starting Minikube with GPU support..."
+      # Start Minikube with GPU support
+      minikube start --driver=docker --extra-config=kubelet.device-plugins=gpu
+      # Enable the NVIDIA GPU device plugin
+      minikube addons enable nvidia-gpu-device-plugin
+    else
+      echo "Minikube is not running. Starting Minikube without GPU support..."
+      minikube start --driver=docker
+    fi
+  fi
+}
+
+echo "Checking Minikube Kubernetes Cluster"
+check_minikube
+
+echo "Kubernetes cluster is up and running"
 kubectl version
 kubectl cluster-info
 kubectl get nodes

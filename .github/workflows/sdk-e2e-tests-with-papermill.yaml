@@ -18,6 +18,14 @@ jobs:
         with:
           python-version: '3.9'
 
+      - name: Setup Minikube Cluster
+        shell: bash
+        run: ./test/e2e/v1beta1/scripts/gh-actions/setup-minikube.sh true false "" "" true
+
+      - name: Setup Katib
+        shell: bash
+        run: ./test/e2e/v1beta1/scripts/gh-actions/setup-katib.sh true
+
 #      - name: setup cluster
 #        run: |
 #          chmod +x ./test/e2e/v1beta1/scripts/gh-actions/create-cluster.sh
