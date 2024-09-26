@@ -77,8 +77,8 @@ sleep $TIMEOUT
 #  kubectl logs "$pod" -n kubeflow || echo "No logs available for $pod."
 #done
 
-kubectl wait --for=condition=ContainersReady=True --timeout=${TIMEOUT} -n kubeflow pod || (kubectl get pods -n kubeflow && kubectl describe pods -n kubeflow && exit 1)
-# - add later if needed -l "katib.kubeflow.org/component in ($WITH_DATABASE_TYPE,controller,db-manager,ui)"
+kubectl wait --for=condition=ContainersReady=True --timeout=${TIMEOUT} -l "katib.kubeflow.org/component in ($WITH_DATABASE_TYPE,controller,db-manager,ui)" -n kubeflow pod || (kubectl get pods -n kubeflow && kubectl describe pods -n kubeflow && exit 1)
+# - add later if needed
 
 #add debug - remove later
 #echo "Gathering logs from failed pods:"
