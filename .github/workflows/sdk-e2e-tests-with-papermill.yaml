@@ -41,9 +41,9 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install papermill kubeflow-katib
-#          jupyter ipykernel requests==2.28.1 urllib3==1.26.15 requests_toolbelt==0.9.1
-#          python -m ipykernel install --user --name python3 --display-name "Python 3"
+          pip install papermill kubeflow-katib jupyter ipykernel
+          python -m ipykernel install --user --name python3 --display-name "Python 3"
+#           requests==2.28.1 urllib3==1.26.15 requests_toolbelt==0.9.1
 
       - name: Set Up Environment
         shell: bash
