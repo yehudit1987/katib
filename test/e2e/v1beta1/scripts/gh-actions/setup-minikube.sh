@@ -31,7 +31,7 @@ function check_minikube() {
     echo "Minikube is already running."
   else
     echo "Minikube is not running. Starting Minikube..."
-    minikube start
+    minikube start --gpus all
   fi
 }
 
