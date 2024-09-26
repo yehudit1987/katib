@@ -72,7 +72,7 @@ kubectl wait --for=condition=ContainersReady=True --timeout=${TIMEOUT} -l "katib
 
 #add debug - remove later
 echo "Gathering logs from failed pods:"
-for pod in $(kubectl get pods -n kubeflow -o jsonpath='{.items[?(@.status.phase!="Running")].metadata.name}'); do
+kubectl get pods -n kubeflow -o json | jq -r '.items[] | select(.status.phase != "Running" or .status.containerStatuses[0].ready == false) | .metadata.name' | while read -r pod; do
   echo "Logs for pod $pod:"
   kubectl logs "$pod" -n kubeflow || echo "Failed to get logs for $pod"
 done
