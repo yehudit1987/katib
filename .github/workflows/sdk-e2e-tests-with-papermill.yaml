@@ -7,7 +7,7 @@ on:
 
 jobs:
   run-experiment:
-    runs-on: ubuntu-latest
+    runs-on: kerido-runner
 
     steps:
       - name: Checkout repository
