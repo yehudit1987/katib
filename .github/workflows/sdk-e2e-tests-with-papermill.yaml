@@ -7,7 +7,7 @@ on:
 
 jobs:
   run-experiment:
-    runs-on: kerido-runner
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -57,7 +57,7 @@ jobs:
         shell: bash
         run: |
           # Define the experiments as a comma-separated string
-          EXPERIMENTS="nas-with-darts.ipynb"
+          EXPERIMENTS="tune-train-from-func.ipynb"
           echo "EXPERIMENTS=$EXPERIMENTS" >> $GITHUB_ENV
           echo "experiments are = $EXPERIMENTS"
 
