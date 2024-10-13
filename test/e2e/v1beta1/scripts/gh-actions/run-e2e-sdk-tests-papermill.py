@@ -36,6 +36,7 @@ def run_notebook(experiment_path, namespace, verbose):
             experiment_path,
             output_notebook,
             log_output=verbose,
+            kernel_name="python3"
         )
         logging.info(f"Notebook executed successfully. Output saved to {output_notebook}.")
         return True
