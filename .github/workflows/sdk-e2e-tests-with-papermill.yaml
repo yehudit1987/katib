@@ -51,7 +51,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install papermill kubeflow-katib jupyter ipykernel
           python -m ipykernel install --user --name python3 --display-name "Python 3"
-#           requests==2.28.1 urllib3==1.26.15 requests_toolbelt==0.9.1
 
       - name: Set Up Environment
         shell: bash
@@ -61,15 +60,15 @@ jobs:
           echo "EXPERIMENTS=$EXPERIMENTS" >> $GITHUB_ENV
           echo "experiments are = $EXPERIMENTS"
 
-      - name: Print working directory
-        run: |
-          pwd
-
-      - name: Print directory tree
-        run: |
-          sudo apt-get update
-          sudo apt-get install tree
-          tree
+#      - name: Print working directory
+#        run: |
+#          pwd
+#
+#      - name: Print directory tree
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install tree
+#          tree
 
       - name: Run experiment
         run: |
