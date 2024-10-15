@@ -24,7 +24,7 @@ jobs:
 
       - name: Setup Katib
         shell: bash
-        run: ./test/e2e/v1beta1/scripts/gh-actions/setup-katib.sh true false postgres
+        run: ./test/e2e/v1beta1/scripts/gh-actions/setup-katib.sh true true postgres
 
 #      - name: setup cluster
 #        run: |
