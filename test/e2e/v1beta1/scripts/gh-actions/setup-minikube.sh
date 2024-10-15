@@ -25,6 +25,7 @@ DEPLOY_KATIB_UI=${1:-false}
 TUNE_API=${2:-false}
 TRIAL_IMAGES=${3:-""}
 EXPERIMENTS=${4:-""}
+ALGORITHM=${5:""}
 
 function check_minikube() {
   if minikube status >/dev/null 2>&1; then
@@ -70,4 +71,4 @@ kubectl cluster-info
 kubectl get nodes
 
 echo "Build and Load container images"
-./build-load.sh "$DEPLOY_KATIB_UI" "$TUNE_API" "$TRIAL_IMAGES" "$EXPERIMENTS" 
+./build-load.sh "$DEPLOY_KATIB_UI" "$TUNE_API" "$TRIAL_IMAGES" "$EXPERIMENTS" "$ALGORITHM"
