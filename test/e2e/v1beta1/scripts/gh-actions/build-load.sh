@@ -29,6 +29,7 @@ DEPLOY_KATIB_UI=${1:-false}
 TUNE_API=${2:-false}
 TRIAL_IMAGES=${3:-""}
 EXPERIMENTS=${4:-""}
+ALGORITHM=${5:""}
 
 REGISTRY="docker.io/kubeflowkatib"
 TAG="e2e-test"
@@ -74,19 +75,35 @@ run() {
 
     suggestions=()
 
-    # Search for Suggestion Images required for Trial.
-    for exp_name in "${EXPERIMENT_ARRAY[@]}"; do
+    if [ -n "${EXPERIMENT_ARRAY[@]}" ]; then
 
-      exp_path=$(find examples/v1beta1 -name "${exp_name}.yaml")
-      algorithm_name="$(yq eval '.spec.algorithm.algorithmName' "$exp_path")"
+      # Search for Suggestion Images required for Trial.
+      for exp_name in "${EXPERIMENT_ARRAY[@]}"; do
 
-      suggestion_image_name="$(algorithm_name=$algorithm_name yq eval '.runtime.suggestions.[] | select(.algorithmName == env(algorithm_name)) | .image' \
-        manifests/v1beta1/installs/katib-standalone/katib-config.yaml | cut -d: -f1)"
-      suggestion_name="$(basename "$suggestion_image_name")"
+        exp_path=$(find examples/v1beta1 -name "${exp_name}.yaml")
+        algorithm_name="$(yq eval '.spec.algorithm.algorithmName' "$exp_path")"
 
-      suggestions+=("$suggestion_name")
+        suggestion_image_name="$(algorithm_name=$algorithm_name yq eval '.runtime.suggestions.[] | select(.algorithmName == env(algorithm_name)) | .image' \
+          manifests/v1beta1/installs/katib-standalone/katib-config.yaml | cut -d: -f1)"
+        suggestion_name="$(basename "$suggestion_image_name")"
 
-    done
+        suggestions+=("$suggestion_name")
+
+      done
+    fi
+
+    if [ -z "${EXPERIMENT_ARRAY[@]}" ] && [ -n "$ALGORITHMS" ]; then
+        # Split the comma-separated ALGORITHMS into an array
+        IFS=',' read -r -a ALGORITHM_ARRAY <<< "$ALGORITHMS"
+
+        # Loop through each algorithm in the array
+        for algorithm_name in "${ALGORITHM_ARRAY[@]}"; do
+          suggestion_image_name="$(algorithm_name=$algorithm_name yq eval '.runtime.suggestions.[] | select(.algorithmName == env(algorithm_name)) | .image' \
+            manifests/v1beta1/installs/katib-standalone/katib-config.yaml | cut -d: -f1)"
+          suggestion_name="$(basename "$suggestion_image_name")"
+          suggestions+=("$suggestion_name")
+        done
+    fi
 
     for s in "${suggestions[@]}"; do
       if [ "$s" == "$CONTAINER_NAME" ]; then
