@@ -29,7 +29,7 @@ DEPLOY_KATIB_UI=${1:-false}
 TUNE_API=${2:-false}
 TRIAL_IMAGES=${3:-""}
 EXPERIMENTS=${4:-""}
-ALGORITHMS=${5:""}
+ALGORITHMS=${5:-""}
 
 REGISTRY="docker.io/kubeflowkatib"
 TAG="e2e-test"
