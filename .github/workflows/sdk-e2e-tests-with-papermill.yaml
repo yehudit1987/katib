@@ -56,7 +56,8 @@ jobs:
         shell: bash
         run: |
           # Define the experiments as a comma-separated string
-          EXPERIMENTS="tune-train-from-func.ipynb"
+          # tune-train-from-func.ipynb Already tested, later will be added
+          EXPERIMENTS="cmaes-and-resume-policies.ipynb"  
           echo "EXPERIMENTS=$EXPERIMENTS" >> $GITHUB_ENV
           echo "experiments are = $EXPERIMENTS"
 
