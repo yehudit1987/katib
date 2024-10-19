@@ -71,4 +71,5 @@ kubectl cluster-info
 kubectl get nodes
 
 echo "Build and Load container images"
+echo "algo are $ALGORITHMS"
 ./build-load.sh "$DEPLOY_KATIB_UI" "$TUNE_API" "$TRIAL_IMAGES" "$EXPERIMENTS" "$ALGORITHMS"
