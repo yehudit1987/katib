@@ -71,21 +71,21 @@ jobs:
 #          sudo apt-get install tree
 #          tree
 
-      - name: Run experiments with Papermill
-        shell: bash
-        run: |
-          IFS=',' read -r -a EXP_ARRAY <<< "$EXPERIMENTS"
-
-          # Loop through each experiment notebook
-          for EXP in "${EXP_ARRAY[@]}"; do
-            echo "Running experiment: $EXP"
-            papermill "examples/v1beta1/sdk/$EXP" "examples/v1beta1/sdk/${EXP%.ipynb}_output.ipynb" --log-output --kernel python3 || {
-                echo "Papermill failed for experiment: $EXP"
-                exit 1
-            }
-          done
-
-#      - name: Run experiment
+#      - name: Run experiments with Papermill
+#        shell: bash
 #        run: |
-#          chmod +x ./test/e2e/v1beta1/scripts/gh-actions/run-e2e-sdk-tests-papermill.sh
-#          ./test/e2e/v1beta1/scripts/gh-actions/run-e2e-sdk-tests-papermill.sh "$EXPERIMENTS"
+#          IFS=',' read -r -a EXP_ARRAY <<< "$EXPERIMENTS"
+#
+#          # Loop through each experiment notebook
+#          for EXP in "${EXP_ARRAY[@]}"; do
+#            echo "Running experiment: $EXP"
+#            papermill "examples/v1beta1/sdk/$EXP" "examples/v1beta1/sdk/${EXP%.ipynb}_output.ipynb" --log-output --kernel python3 || {
+#                echo "Papermill failed for experiment: $EXP"
+#                exit 1
+#            }
+#          done
+
+      - name: Run experiment
+        run: |
+          chmod +x ./test/e2e/v1beta1/scripts/gh-actions/run-e2e-sdk-tests-papermill.sh
+          ./test/e2e/v1beta1/scripts/gh-actions/run-e2e-sdk-tests-papermill.sh "$EXPERIMENTS"
