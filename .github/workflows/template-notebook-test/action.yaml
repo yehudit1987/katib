@@ -1,0 +1,53 @@
+name: Notebook test template
+description: A composite action to setup and run example notebooks using Papermill
+
+inputs:
+  python-version:
+    required: false
+    description: Python version
+    default: "3.9"
+  papermill-args-yaml:
+    description: 'Additional arguments to pass to Papermill in yaml format'
+    required: false
+    default: ""
+  notebook-input:
+    description: 'List of paths to the input notebooks, separated by commas'
+    required: true
+
+runs:
+  using: composite
+  steps:
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        pip install papermill kubeflow-katib jupyter ipykernel
+        python -m ipykernel install --user --name python3 --display-name "Python 3"
+
+    - name: Setup Minikube Cluster
+      shell: bash
+      run: ../../test/e2e/v1beta1/scripts/gh-actions/setup-minikube.sh true true "" "" "cmaes"
+
+    - name: Setup Katib
+      shell: bash
+      run: ../../test/e2e/v1beta1/scripts/gh-actions/setup-katib.sh true true postgres
+
+    - name: Run Jupyter Notebook with Papermill
+      shell: bash
+      run: |
+        IFS=',' read -r -a NOTEBOOK_ARRAY <<< "${{ inputs.notebook-input }}"
+        # Loop through each notebook path
+        for NOTEBOOK in "${NOTEBOOK_ARRAY[@]}"; do
+          OUTPUT_FILE="${NOTEBOOK%.ipynb}_output.ipynb"
+          echo "Running notebook: $NOTEBOOK"
+          papermill "$NOTEBOOK" "$OUTPUT_FILE" --log-output --kernel python3 --parameters_yaml "${{ inputs.papermill-args-yaml }}" || {
+              echo "Papermill failed for notebook: $NOTEBOOK"
+              exit 1
+          }
+        done
