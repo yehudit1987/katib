@@ -57,7 +57,8 @@ jobs:
         run: |
           # Define the experiments as a comma-separated string
           # tune-train-from-func.ipynb Already tested, later will be added
-          EXPERIMENTS="cmaes-and-resume-policies.ipynb,tune-train-from-func.ipynb"  
+          EXPERIMENTS="nas-with-darts.ipynb" 
+          # cmaes-and-resume-policies.ipynb,tune-train-from-func.ipynb -already passed
           echo "EXPERIMENTS=$EXPERIMENTS" >> $GITHUB_ENV
           echo "experiments are = $EXPERIMENTS"
 
