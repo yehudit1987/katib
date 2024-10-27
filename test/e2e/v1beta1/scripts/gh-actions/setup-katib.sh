@@ -65,10 +65,12 @@ echo "Deploying Katib"
 cd ../../../../../ && WITH_DATABASE_TYPE=$WITH_DATABASE_TYPE make deploy && cd -
 
 # Wait until all Katib pods is running.
-TIMEOUT=120s
+TIMEOUT=180s
 
-kubectl wait --for=condition=ContainersReady=True --timeout=${TIMEOUT} -l "katib.kubeflow.org/component in ($WITH_DATABASE_TYPE,controller,db-manager,ui)" -n kubeflow pod ||
-  (kubectl get pods -n kubeflow && kubectl describe pods -n kubeflow && exit 1)
+echo "Waiting for pods to be ready for $TIMEOUT seconds..."
+sleep $TIMEOUT
+
+kubectl wait --for=condition=ContainersReady=True --timeout=${TIMEOUT} -l "katib.kubeflow.org/component in ($WITH_DATABASE_TYPE,controller,db-manager,ui)" -n kubeflow pod || (kubectl get pods -n kubeflow && kubectl describe pods -n kubeflow && exit 1)
 
 echo "All Katib components are running."
 echo "Katib deployments"
@@ -90,5 +92,9 @@ if [ $? -ne 1 ]; then
   exit 1
 fi
 set -o errexit
+
+if ! kubectl get namespaces | grep -q "kubeflow-user-example-com"; then
+  kubectl create namespace kubeflow-user-example-com
+fi
 
 exit 0
