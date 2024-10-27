@@ -32,11 +32,11 @@ runs:
 
     - name: Setup Minikube Cluster
       shell: bash
-      run: ../../../test/e2e/v1beta1/scripts/gh-actions/setup-minikube.sh true true "" "" "cmaes"
+      run: ./test/e2e/v1beta1/scripts/gh-actions/setup-minikube.sh true true "" "" "cmaes"
 
     - name: Setup Katib
       shell: bash
-      run: ../../../test/e2e/v1beta1/scripts/gh-actions/setup-katib.sh true true postgres
+      run: ./test/e2e/v1beta1/scripts/gh-actions/setup-katib.sh true true postgres
 
     - name: Run Jupyter Notebook with Papermill
       shell: bash
