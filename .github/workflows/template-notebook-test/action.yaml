@@ -32,7 +32,7 @@ runs:
 
     - name: Setup Minikube Cluster
       shell: bash
-      run: ./test/e2e/v1beta1/scripts/gh-actions/setup-minikube.sh true true "" "" "cmaes"
+      run: ./test/e2e/v1beta1/scripts/gh-actions/setup-minikube-for-nb.sh true true "" "" "cmaes"
 
     - name: Setup Katib
       shell: bash
