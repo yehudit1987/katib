@@ -39,6 +39,7 @@ SPECIFIED_DEVICE_TYPE_IMAGES=("enas-cnn-cifar10-cpu" "darts-cnn-cifar10-cpu" "py
 
 IFS="," read -r -a TRIAL_IMAGE_ARRAY <<< "$TRIAL_IMAGES"
 IFS="," read -r -a EXPERIMENT_ARRAY <<< "$EXPERIMENTS"
+IFS=',' read -r -a ALGORITHM_ARRAY <<< "$ALGORITHMS"
 
 _build_containers() {
   CONTAINER_NAME=${1:-"katib-controller"}
@@ -75,35 +76,27 @@ run() {
 
     suggestions=()
 
-    if [ -n "${EXPERIMENT_ARRAY[@]}" ]; then
+    # Search for Suggestion Images required for Trial.
+    for exp_name in "${EXPERIMENT_ARRAY[@]}"; do
 
-      # Search for Suggestion Images required for Trial.
-      for exp_name in "${EXPERIMENT_ARRAY[@]}"; do
+      exp_path=$(find examples/v1beta1 -name "${exp_name}.yaml")
+      algorithm_name="$(yq eval '.spec.algorithm.algorithmName' "$exp_path")"
 
-        exp_path=$(find examples/v1beta1 -name "${exp_name}.yaml")
-        algorithm_name="$(yq eval '.spec.algorithm.algorithmName' "$exp_path")"
+      suggestion_image_name="$(algorithm_name=$algorithm_name yq eval '.runtime.suggestions.[] | select(.algorithmName == env(algorithm_name)) | .image' \
+        manifests/v1beta1/installs/katib-standalone/katib-config.yaml | cut -d: -f1)"
+      suggestion_name="$(basename "$suggestion_image_name")"
 
-        suggestion_image_name="$(algorithm_name=$algorithm_name yq eval '.runtime.suggestions.[] | select(.algorithmName == env(algorithm_name)) | .image' \
-          manifests/v1beta1/installs/katib-standalone/katib-config.yaml | cut -d: -f1)"
-        suggestion_name="$(basename "$suggestion_image_name")"
+      suggestions+=("$suggestion_name")
 
-        suggestions+=("$suggestion_name")
+    done
 
-      done
-    fi
-
-    if [ -z "${EXPERIMENT_ARRAY[@]}" ] && [ -n "$ALGORITHMS" ]; then
-        # Split the comma-separated ALGORITHMS into an array
-        IFS=',' read -r -a ALGORITHM_ARRAY <<< "$ALGORITHMS"
-
-        # Loop through each algorithm in the array
-        for algorithm_name in "${ALGORITHM_ARRAY[@]}"; do
-          suggestion_image_name="$(algorithm_name=$algorithm_name yq eval '.runtime.suggestions.[] | select(.algorithmName == env(algorithm_name)) | .image' \
-            manifests/v1beta1/installs/katib-standalone/katib-config.yaml | cut -d: -f1)"
-          suggestion_name="$(basename "$suggestion_image_name")"
-          suggestions+=("$suggestion_name")
-        done
-    fi
+    # Loop through each algorithm in the array
+    for algorithm_name in "${ALGORITHM_ARRAY[@]}"; do
+      suggestion_image_name="$(algorithm_name=$algorithm_name yq eval '.runtime.suggestions.[] | select(.algorithmName == env(algorithm_name)) | .image' \
+        manifests/v1beta1/installs/katib-standalone/katib-config.yaml | cut -d: -f1)"
+      suggestion_name="$(basename "$suggestion_image_name")"
+      suggestions+=("$suggestion_name")
+    done
 
     for s in "${suggestions[@]}"; do
       if [ "$s" == "$CONTAINER_NAME" ]; then
