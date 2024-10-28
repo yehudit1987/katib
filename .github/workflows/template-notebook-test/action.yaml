@@ -30,6 +30,10 @@ runs:
         pip install papermill kubeflow-katib jupyter ipykernel
         python -m ipykernel install --user --name python3 --display-name "Python 3"
 
+    - name: Set executable permissions
+      shell: bash
+      run: chmod +x test/e2e/v1beta1/scripts/gh-actions/setup-minikube.sh
+
     - name: Setup Minikube Cluster
       shell: bash
       run: ./test/e2e/v1beta1/scripts/gh-actions/setup-minikube-for-nb.sh true true "" "" "cmaes"

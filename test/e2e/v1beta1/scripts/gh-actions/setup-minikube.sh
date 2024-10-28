@@ -25,11 +25,43 @@ DEPLOY_KATIB_UI=${1:-false}
 TUNE_API=${2:-false}
 TRIAL_IMAGES=${3:-""}
 EXPERIMENTS=${4:-""}
+ALGORITHMS=${5:-""}
 
-echo "Start to setup Minikube Kubernetes Cluster"
+function check_minikube() {
+  if minikube status >/dev/null 2>&1; then
+    echo "Minikube is already running."
+  else
+    echo "Minikube is not running. Starting Minikube..."
+    minikube start
+  fi
+}
+
+# Choose upgrade method based on your system
+# Option 1: Using package manager (replace commands for your system)
+if [ -x "$(command -v apt-get)" ]; then
+  echo "Upgrading Podman using apt-get..."
+  sudo apt-get update
+  sudo apt-get install -y podman
+elif [ -x "$(command -v dnf)" ]; then
+  echo "Upgrading Podman using dnf..."
+  sudo dnf upgrade podman -y
+else
+  echo "Package manager not found. Skipping upgrade."
+fi
+
+  # Option 2: Manual installation (uncomment and replace URLs)
+  # curl -LO https://github.com/containers/podman/releases/latest/download/podman-linux-amd64  # Replace URL
+  # chmod +x podman-linux-amd64
+  # sudo mv podman-linux-amd64 /usr/local/bin/podman
+
+
+echo "Checking Minikube Kubernetes Cluster"
+check_minikube
+
+echo "Kubernetes cluster is up and running"
 kubectl version
 kubectl cluster-info
 kubectl get nodes
 
 echo "Build and Load container images"
-./build-load.sh "$DEPLOY_KATIB_UI" "$TUNE_API" "$TRIAL_IMAGES" "$EXPERIMENTS"
+./build-load.sh "$DEPLOY_KATIB_UI" "$TUNE_API" "$TRIAL_IMAGES" "$EXPERIMENTS" "$ALGORITHMS"
