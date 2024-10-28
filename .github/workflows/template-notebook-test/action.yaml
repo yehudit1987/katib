@@ -13,10 +13,31 @@ inputs:
   notebook-input:
     description: 'List of paths to the input notebooks, separated by commas'
     required: true
+  kubernetes-version:
+    required: true
+    description: Kubernetes version
 
 runs:
   using: composite
   steps:
+
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v4
+      with:
+        version: ${{ inputs.kubernetes-version }}
+
+    - name: Setup Minikube Cluster
+      uses: medyagh/setup-minikube@v0.0.18
+      with:
+        network-plugin: cni
+        cni: flannel
+        driver: none
+        kubernetes-version: ${{ inputs.kubernetes-version }}
+        minikube-version: 1.31.1
+        start-args: --wait-timeout=120s
+
+    - name: Setup Docker Buildx
+      uses: docker/setup-buildx-action@v3
 
     - name: Setup Python
       uses: actions/setup-python@v5
