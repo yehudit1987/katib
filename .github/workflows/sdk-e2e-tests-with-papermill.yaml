@@ -17,9 +17,16 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.9", "3.10", "3.11"]
+        kubernetes-version: ["v1.27.11", "v1.28.7", "v1.29.2"]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Test Env
+        uses: ./.github/workflows/template-setup-e2e-test
+        with:
+          kubernetes-version: ${{ matrix.kubernetes-version }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Test Notebook
         uses: ./.github/workflows/template-notebook-test

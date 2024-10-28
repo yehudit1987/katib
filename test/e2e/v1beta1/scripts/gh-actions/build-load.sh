@@ -75,7 +75,7 @@ run() {
 
     suggestions=()
 
-    if [ -n "${EXPERIMENT_ARRAY[@]}" ]; then
+    if [ "${EXPERIMENT_ARRAY[@]}" -ne 0 ]; then
 
       # Search for Suggestion Images required for Trial.
       for exp_name in "${EXPERIMENT_ARRAY[@]}"; do
@@ -92,7 +92,7 @@ run() {
       done
     fi
 
-    if [ -z "${EXPERIMENT_ARRAY[@]}" ] && [ -n "$ALGORITHMS" ]; then
+    if [ "${EXPERIMENT_ARRAY[@]}" -eq 0 ] && [ -n "$ALGORITHMS" ]; then
         # Split the comma-separated ALGORITHMS into an array
         IFS=',' read -r -a ALGORITHM_ARRAY <<< "$ALGORITHMS"
 
