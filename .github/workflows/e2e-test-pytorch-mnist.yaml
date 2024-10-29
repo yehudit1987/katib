@@ -4,7 +4,6 @@ on:
   pull_request:
     paths-ignore:
       - "pkg/ui/v1beta1/frontend/**"
-  push: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
