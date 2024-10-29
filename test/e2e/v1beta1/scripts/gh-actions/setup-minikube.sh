@@ -36,8 +36,6 @@ function check_minikube() {
   fi
 }
 
-# Choose upgrade method based on your system
-# Option 1: Using package manager (replace commands for your system)
 if [ -x "$(command -v apt-get)" ]; then
   echo "Upgrading Podman using apt-get..."
   sudo apt-get update
