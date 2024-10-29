@@ -31,11 +31,6 @@ jobs:
           # Comma Delimited
           trial-images: pytorch-mnist-cpu
 
-      - name: debug step
-        shell: bash
-        run: |
-          echo "Just to trigger the job" 
-
     strategy:
       fail-fast: false
       matrix:
