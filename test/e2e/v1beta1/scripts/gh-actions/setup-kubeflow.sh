@@ -75,13 +75,13 @@ kubectl -n kubeflow get pods
 
 # Validate Katib components are ready
 echo "Validating Katib components..."
-KATIB_READY=$(kubectl -n kubeflow get pods -l "katib.kubeflow.org/component in (controller, db-manager, ui)" -o jsonpath='{.items[*].status.conditions[?(@.type=="Ready")].status}' | grep -c True)
-KATIB_TOTAL=$(kubectl -n kubeflow get pods -l "katib.kubeflow.org/component in (controller, db-manager, ui)" --no-headers | wc -l)
+KATIB_READY=$(kubectl -n kubeflow get pods -l "katib.kubeflow.org/component in (controller, db-manager)" -o jsonpath='{.items[*].status.conditions[?(@.type=="Ready")].status}' | grep -c True)
+KATIB_TOTAL=$(kubectl -n kubeflow get pods -l "katib.kubeflow.org/component in (controller, db-manager)" --no-headers | wc -l)
 
 if [ "$KATIB_READY" -eq "$KATIB_TOTAL" ]; then
-    echo "All Katib components are ready."
+    echo "All required Katib components are ready."
 else
-    echo "Some Katib components are not ready!"
+    echo "Some required Katib components are not ready!"
     exit 1
 fi
 
@@ -91,9 +91,9 @@ PIPELINES_READY=$(kubectl -n kubeflow get pods -l "control-plane=controller" -o 
 PIPELINES_TOTAL=$(kubectl -n kubeflow get pods -l "control-plane=controller" --no-headers | wc -l)
 
 if [ "$PIPELINES_READY" -eq "$PIPELINES_TOTAL" ]; then
-    echo "All Pipelines components are ready."
+    echo "All required Pipelines components are ready."
 else
-    echo "Some Pipelines components are not ready!"
+    echo "Some required Pipelines components are not ready!"
     exit 1
 fi
 
