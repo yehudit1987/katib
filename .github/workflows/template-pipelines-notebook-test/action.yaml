@@ -33,7 +33,7 @@ runs:
     - name: Setup kubectl
       uses: azure/setup-kubectl@v4
       with:
-        version: '1.29.0'
+        version: "v1.29.2"
 
     - name: Install Kustomize
       shell: bash
