@@ -38,8 +38,9 @@ runs:
     - name: Install Kustomize
       shell: bash
       run: |
-        curl -sLO https://github.com/kubernetes-sigs/kustomize/releases/latest/download/kustomize_v5.2.1_linux_amd64.tar.gz
-        tar -xzvf kustomize_v5.2.1_linux_amd64.tar.gz
+        echo "Downloading Kustomize..."
+        curl -Lo kustomize "https://github.com/kubernetes-sigs/kustomize/releases/latest/download/kustomize_v5.2.1_linux_amd64"
+        chmod +x kustomize
         sudo mv kustomize /usr/local/bin/
 
 # here I should use other script to setup kubeflow or katib with pipelines. Also verify sending the required algorithms in case of using existing script for katib.
