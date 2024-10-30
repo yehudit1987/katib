@@ -56,56 +56,12 @@ kubectl create secret generic regcred \
 echo "Downloading Kubeflow manifests..."
 git clone --depth=1 https://github.com/kubeflow/manifests.git kubeflow-manifests
 
-apply_kustomize_with_retry() {
-    local dir=$1
-    local retries=5
-    local delay=15
-
-    for ((i = 1; i <= retries; i++)); do
-        echo "Applying kustomization in ${dir} (Attempt ${i})"
-
-        # Build with kustomize
-        kustomize_output=$(kustomize build "${dir}")
-        if [ $? -ne 0 ]; then
-            echo "Error building kustomization in ${dir}. Retrying in ${delay} seconds..."
-            sleep ${delay}
-            continue
-        fi
-
-        # Check if output is empty
-        if [ -z "$kustomize_output" ]; then
-            echo "No resources generated from kustomization in ${dir}. Retrying in ${delay} seconds..."
-            sleep ${delay}
-            continue
-        fi
-
-        # Apply each resource one at a time
-        echo "$kustomize_output" | while read -r resource; do
-            echo "$resource" | kubectl apply -f -
-            if [ $? -ne 0 ]; then
-                echo "Failed to apply resource. Exiting..."
-                return 1  # Exit the function on individual resource failure
-            fi
-            sleep ${delay}  # Give time for each CRD or resource to register
-        done
-
-        echo "Kustomization applied successfully in ${dir}"
-        return 0
-    done
-
-    echo "Failed to apply kustomization in ${dir} after ${retries} attempts."
-    exit 1
-}
-
-
-# Apply Kubeflow base kustomization and wait for CRDs to be registered
-apply_kustomize_with_retry "kubeflow-manifests/example"
-## Deploy Kubeflow components
-#echo "Deploying Kubeflow components..."
-#while ! kustomize build kubeflow-manifests/example | kubectl apply -f -; do
-#    echo "Retrying to apply resources"
-#    sleep 20
-#done
+# Deploy Kubeflow components
+echo "Deploying Kubeflow components..."
+while ! kustomize build kubeflow-manifests/example | kubectl apply -f -; do
+    echo "Retrying to apply resources"
+    sleep 60
+done
 
 # Verify deployment
 echo "Verifying Kubeflow deployment..."
