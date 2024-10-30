@@ -30,10 +30,10 @@ runs:
         pip install papermill kubeflow-katib jupyter ipykernel
         python -m ipykernel install --user --name python3 --display-name "Python 3"
 
-    - name: Set up Kubernetes
-      uses: azure/setup-kubectl@v1
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v4
       with:
-        version: '1.29.0'  # Specify your required Kubernetes version
+        version: '1.29.0'
 
     - name: Install Kustomize
       shell: bash
