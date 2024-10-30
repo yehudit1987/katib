@@ -1,4 +1,4 @@
-name: Run e2e sdk tests with papermill
+name: Run e2e pipelines tests with papermill
 
 on:
   push: {}
@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Test Notebook
-        uses: ./.github/workflows/template-notebook-test
+        uses: ./.github/workflows/template-pipelines-notebook-test
         with:
           python-version: ${{ matrix.python-version }}
           notebook-input: "examples/v1beta1/kubeflow-pipelines/early-stopping.ipynb"
