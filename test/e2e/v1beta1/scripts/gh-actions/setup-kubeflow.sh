@@ -26,6 +26,35 @@ if ! command -v kustomize &>/dev/null; then
     sudo mv ./kustomize /usr/local/bin/kustomize
 fi
 
+# Check Kubernetes version
+required_k8s_version="1.29"
+k8s_version=$(kubectl version --short | grep Server | awk '{print $3}')
+if [[ "$(printf '%s\n' "$required_k8s_version" "$k8s_version" | sort -V | head -n1)" != "$required_k8s_version" ]]; then
+    echo "Error: Kubernetes version must be ${required_k8s_version}+ (current: ${k8s_version})"
+    exit 1
+fi
+
+# Check Kustomize version
+required_kustomize_version="5.2.1"
+kustomize_version=$(kustomize version | grep -oP '\d+\.\d+\.\d+')
+if [[ "$(printf '%s\n' "$required_kustomize_version" "$kustomize_version" | sort -V | head -n1)" != "$required_kustomize_version" ]]; then
+    echo "Error: Kustomize version must be ${required_kustomize_version}+ (current: ${kustomize_version})"
+    exit 1
+fi
+
+# Check kubectl version
+kubectl_version=$(kubectl version --client --short | awk '{print $3}')
+if [[ "$(printf '%s\n' "$required_k8s_version" "$kubectl_version" | sort -V | head -n1)" != "$required_k8s_version" ]]; then
+    echo "Error: Kubectl version must be compatible with Kubernetes version (current: ${kubectl_version})"
+    exit 1
+fi
+
+# Check for default StorageClass
+if ! kubectl get storageclass | grep -q 'default'; then
+    echo "Error: No default StorageClass found in the cluster."
+    exit 1
+fi
+
 # Create kind cluster for Kubeflow
 echo "Creating kind cluster for Kubeflow..."
 cat <<EOF | kind create cluster --name=kubeflow --config=-
@@ -33,7 +62,7 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
-  image: kindest/node:v1.31.0@sha256:53df588e04085fd41ae12de0c3fe4c72f7013bba32a20e7325357a1ac94ba865
+  image: kindest/node:v1.31.0
   kubeadmConfigPatches:
   - |
     kind: ClusterConfiguration
@@ -48,11 +77,15 @@ export KUBECONFIG="$(kind get kubeconfig-path --name=kubeflow)"
 
 # Set up Docker registry secret for image pulling (ensure Docker is logged in beforehand)
 echo "Setting up Docker registry credentials..."
+if [[ ! -f "${HOME}/.docker/config.json" ]]; then
+    echo "Docker config.json not found! Please log in to Docker first."
+    exit 1
+fi
 kubectl create secret generic regcred \
     --from-file=.dockerconfigjson="${HOME}/.docker/config.json" \
     --type=kubernetes.io/dockerconfigjson
 
-# Download Kubeflow manifests.
+# Download Kubeflow manifests
 echo "Downloading Kubeflow manifests..."
 git clone --depth=1 https://github.com/kubeflow/manifests.git kubeflow-manifests
 
