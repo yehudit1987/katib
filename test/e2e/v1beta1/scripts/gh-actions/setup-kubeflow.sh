@@ -52,9 +52,13 @@ kubectl create secret generic regcred \
     --from-file=.dockerconfigjson="${HOME}/.docker/config.json" \
     --type=kubernetes.io/dockerconfigjson
 
+# Download Kubeflow manifests.
+echo "Downloading Kubeflow manifests..."
+git clone --depth=1 https://github.com/kubeflow/manifests.git kubeflow-manifests
+
 # Deploy Kubeflow components
 echo "Deploying Kubeflow components..."
-while ! kustomize build example | kubectl apply -f -; do
+while ! kustomize build kubeflow-manifests/example | kubectl apply -f -; do
     echo "Retrying to apply resources"
     sleep 20
 done
