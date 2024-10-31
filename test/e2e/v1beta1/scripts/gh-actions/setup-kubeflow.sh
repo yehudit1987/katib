@@ -76,7 +76,7 @@ sleep 60
 
 # Validate Katib components are ready
 echo "Validating Katib components..."
-KATIB_READY=$(kubectl -n kubeflow get pods -l "katib.kubeflow.org/component in (controller, db-manager)" -o jsonpath='{.items[*].status.conditions[?(@.type=="Ready")].status}' | grep -c True)
+KATIB_READY=$(kubectl -n kubeflow get pods -l "katib.kubeflow.org/component in (controller, db-manager)" -o jsonpath='{.items[*].status.containerStatuses[*].ready}' | grep -c true)
 KATIB_TOTAL=$(kubectl -n kubeflow get pods -l "katib.kubeflow.org/component in (controller, db-manager)" --no-headers | wc -l)
 echo "KATIB_READY = $KATIB_READY KATIB_TOTAL = $KATIB_TOTAL"
 if [ "$KATIB_READY" -eq "$KATIB_TOTAL" ]; then
@@ -88,7 +88,7 @@ fi
 
 # Validate Pipelines components are ready
 echo "Validating Pipelines components..."
-PIPELINES_READY=$(kubectl -n kubeflow get pods -l "control-plane=controller" -o jsonpath='{.items[*].status.conditions[?(@.type=="Ready")].status}' | grep -c True)
+PIPELINES_READY=$(kubectl -n kubeflow get pods -l "control-plane=controller" -o jsonpath='{.items[*].status.containerStatuses[*].ready}' | grep -c True)
 PIPELINES_TOTAL=$(kubectl -n kubeflow get pods -l "control-plane=controller" --no-headers | wc -l)
 
 if [ "$PIPELINES_READY" -eq "$PIPELINES_TOTAL" ]; then
