@@ -76,7 +76,7 @@ sleep 60
 
 # Validate Katib components are ready
 echo "Validating Katib components..."
-KATIB_READY=$(kubectl -n kubeflow get pods -l "katib.kubeflow.org/component in (controller, db-manager)" -o jsonpath='{.items[*].status.containerStatuses[*].ready}' | grep -c true)
+KATIB_READY=$(kubectl -n kubeflow get pods -l "katib.kubeflow.org/component in (controller, db-manager)" -o json | jq '[.items[] | select(all(.status.containerStatuses[].ready == true))] | length')
 KATIB_TOTAL=$(kubectl -n kubeflow get pods -l "katib.kubeflow.org/component in (controller, db-manager)" --no-headers | wc -l)
 echo "KATIB_READY = $KATIB_READY KATIB_TOTAL = $KATIB_TOTAL"
 if [ "$KATIB_READY" -eq "$KATIB_TOTAL" ]; then
