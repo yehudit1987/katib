@@ -1,4 +1,4 @@
-name: Run e2e sdk tests with papermill
+name: E2E Tests with Notebooks
 
 on:
   push: {}
@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  create-katib-notebooks-test:
+  e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:

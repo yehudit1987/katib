@@ -76,26 +76,28 @@ run() {
 
     suggestions=()
 
+get_suggestion_image() {
+    local algorithm_name="$1"
+
+    suggestion_image_name="$(algorithm_name=$algorithm_name yq eval '.runtime.suggestions.[] | select(.algorithmName == env(algorithm_name)) | .image' \
+        manifests/v1beta1/installs/katib-standalone/katib-config.yaml | cut -d: -f1)"
+
+    suggestion_name="$(basename "$suggestion_image_name")"
+    suggestions+=("$suggestion_name")
+}
+
     # Search for Suggestion Images required for Trial.
     for exp_name in "${EXPERIMENT_ARRAY[@]}"; do
 
       exp_path=$(find examples/v1beta1 -name "${exp_name}.yaml")
       algorithm_name="$(yq eval '.spec.algorithm.algorithmName' "$exp_path")"
-
-      suggestion_image_name="$(algorithm_name=$algorithm_name yq eval '.runtime.suggestions.[] | select(.algorithmName == env(algorithm_name)) | .image' \
-        manifests/v1beta1/installs/katib-standalone/katib-config.yaml | cut -d: -f1)"
-      suggestion_name="$(basename "$suggestion_image_name")"
-
-      suggestions+=("$suggestion_name")
+      get_suggestion_image "$algorithm_name"
 
     done
 
     # Loop through each algorithm in the array
     for algorithm_name in "${ALGORITHM_ARRAY[@]}"; do
-      suggestion_image_name="$(algorithm_name=$algorithm_name yq eval '.runtime.suggestions.[] | select(.algorithmName == env(algorithm_name)) | .image' \
-        manifests/v1beta1/installs/katib-standalone/katib-config.yaml | cut -d: -f1)"
-      suggestion_name="$(basename "$suggestion_image_name")"
-      suggestions+=("$suggestion_name")
+      get_suggestion_image "$algorithm_name"
     done
 
     for s in "${suggestions[@]}"; do
