@@ -37,9 +37,9 @@ runs:
 
 # here I should use other script to setup kubeflow or katib with pipelines. Also verify sending the required algorithms in case of using existing script for katib.
 
-#    - name: Setup Minikube Cluster
-#      shell: bash
-#      run: ./test/e2e/v1beta1/scripts/gh-actions/setup-minikube.sh true true "" "" "cmaes"
+    - name: Setup Minikube Cluster
+      shell: bash
+      run: ./test/e2e/v1beta1/scripts/gh-actions/setup-minikube.sh true true "" "" "random"
 #
 #    - name: Setup Katib
 #      shell: bash
