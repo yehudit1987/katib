@@ -185,4 +185,4 @@ echo -e "\nCleanup Build Cache...\n"
 docker buildx prune -f
 
 echo -e "\nAll Katib images with ${TAG} tag have been built successfully!\n"
-echo -e "Images are: \n ${docker images}"
+echo -e "Images are: \n $(docker images)"
