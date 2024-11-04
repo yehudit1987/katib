@@ -6,6 +6,9 @@ inputs:
     required: false
     description: Python version
     default: "3.9"
+  kubernetes-version:
+    required: false
+    description: Kubernetes version
   papermill-args-yaml:
     description: 'Additional arguments to pass to Papermill in yaml format'
     required: false
@@ -44,10 +47,10 @@ runs:
         pip install papermill kubeflow-katib jupyter ipykernel
         python -m ipykernel install --user --name python3 --display-name "Python 3"
 
-#    - name: Setup kubectl
-#      uses: azure/setup-kubectl@v4
-#      with:
-#        version: "v1.29.2"
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v4
+      with:
+        version: ${{ inputs.kubernetes-version }}
 
 # here I should use other script to setup kubeflow or katib with pipelines. Also verify sending the required algorithms in case of using existing script for katib.
 
