@@ -98,5 +98,12 @@ sleep 60
 #    echo "Some required Pipelines components are not ready!"
 #    exit 1
 #fi
+kubectl create namespace kubeflow-user-example-com
+
+kubectl create rolebinding kubeflow-job-access \
+  --clusterrole=edit \
+  --serviceaccount=kubeflow-user-example-com:kubeflow \
+  --namespace=kubeflow-user-example-com
+
 
 echo "Kubeflow installation completed successfully."
