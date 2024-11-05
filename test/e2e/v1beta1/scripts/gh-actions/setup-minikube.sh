@@ -36,17 +36,6 @@ function check_minikube() {
   fi
 }
 
-if [ -x "$(command -v apt-get)" ]; then
-  echo "Upgrading Podman using apt-get..."
-  sudo apt-get update
-  sudo apt-get install -y podman
-elif [ -x "$(command -v dnf)" ]; then
-  echo "Upgrading Podman using dnf..."
-  sudo dnf upgrade podman -y
-else
-  echo "Package manager not found. Skipping upgrade."
-fi
-
 echo "Checking Minikube Kubernetes Cluster"
 check_minikube
 

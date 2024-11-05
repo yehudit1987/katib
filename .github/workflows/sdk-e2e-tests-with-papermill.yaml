@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Test Notebook
-        uses: ./.github/workflows/template-notebook-test
+        uses: ./.github/workflows/template-e2e-notebook-test
         with:
           python-version: ${{ matrix.python-version }}
           notebook-input: "examples/v1beta1/sdk/cmaes-and-resume-policies.ipynb,examples/v1beta1/sdk/tune-train-from-func.ipynb"
