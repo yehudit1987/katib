@@ -27,17 +27,17 @@ TRIAL_IMAGES=${3:-""}
 EXPERIMENTS=${4:-""}
 ALGORITHMS=${5:-""}
 
-function check_minikube() {
-  if minikube status >/dev/null 2>&1; then
-    echo "Minikube is already running."
-  else
-    echo "Minikube is not running. Starting Minikube..."
-    minikube start
-  fi
-}
-
-echo "Checking Minikube Kubernetes Cluster"
-check_minikube
+#function check_minikube() {
+#  if minikube status >/dev/null 2>&1; then
+#    echo "Minikube is already running."
+#  else
+#    echo "Minikube is not running. Starting Minikube..."
+#    minikube start
+#  fi
+#}
+#
+#echo "Checking Minikube Kubernetes Cluster"
+#check_minikube
 
 echo "Start to setup Minikube Kubernetes Cluster"
 kubectl version
