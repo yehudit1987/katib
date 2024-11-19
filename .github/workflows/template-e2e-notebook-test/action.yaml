@@ -9,6 +9,10 @@ inputs:
   notebook-input:
     description: 'List of paths to the input notebooks, separated by commas'
     required: true
+  papermill-args-yaml:
+    description: 'Additional arguments to pass to Papermill in yaml format'
+    required: false
+    default: ""
 
 runs:
   using: composite
@@ -52,7 +56,7 @@ runs:
         for NOTEBOOK in "${NOTEBOOK_ARRAY[@]}"; do
           OUTPUT_FILE="${NOTEBOOK%.ipynb}_output.ipynb"
           echo "Running notebook: $NOTEBOOK"
-          papermill "$NOTEBOOK" "$OUTPUT_FILE" --log-output --kernel python3 || {
+          papermill "$NOTEBOOK" "$OUTPUT_FILE" --parameters_yaml ${{ inputs.papermill-args-yaml }} --log-output --kernel python3 || {
               echo "Papermill failed for notebook: $NOTEBOOK"
               exit 1
           }
