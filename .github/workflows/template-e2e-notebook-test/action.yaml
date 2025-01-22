@@ -56,8 +56,5 @@ runs:
         for NOTEBOOK in "${NOTEBOOK_ARRAY[@]}"; do
           OUTPUT_FILE="${NOTEBOOK%.ipynb}_output.ipynb"
           echo "Running notebook: $NOTEBOOK"
-          papermill "$NOTEBOOK" "$OUTPUT_FILE" --parameters_yaml "${{ inputs.papermill-args-yaml }}" --log-output --kernel python3 || {
-              echo "Papermill failed for notebook: $NOTEBOOK"
-              exit 1
-          }
+          ./test/e2e/v1beta1/scripts/gh-actions/run-notebook.sh -i "$NOTEBOOK" -n kubeflow
         done
