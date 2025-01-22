@@ -48,10 +48,6 @@ runs:
       shell: bash
       run: ./test/e2e/v1beta1/scripts/gh-actions/setup-katib.sh true true postgres
 
-    - name: Change script permissions
-      shell: bash
-      run: chmod +x ./test/e2e/v1beta1/scripts/gh-actions/run-notebook.sh
-
     - name: Run Jupyter Notebook with Papermill
       shell: bash
       run: |
