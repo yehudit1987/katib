@@ -26,4 +26,3 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           notebook-input: "examples/v1beta1/sdk/cmaes-and-resume-policies.ipynb,examples/v1beta1/sdk/tune-train-from-func.ipynb"
-#          papermill-args-yaml: "namespace: kubeflow"

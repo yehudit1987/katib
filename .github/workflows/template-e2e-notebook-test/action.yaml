@@ -9,10 +9,6 @@ inputs:
   notebook-input:
     description: 'List of paths to the input notebooks, separated by commas'
     required: true
-  papermill-args-yaml:
-    description: 'Additional arguments to pass to Papermill in yaml format'
-    required: false
-    default: ""
 
 runs:
   using: composite
@@ -52,9 +48,7 @@ runs:
       shell: bash
       run: |
         IFS=',' read -r -a NOTEBOOK_ARRAY <<< "${{ inputs.notebook-input }}"
-        # Loop through each notebook path
         for NOTEBOOK in "${NOTEBOOK_ARRAY[@]}"; do
-          OUTPUT_FILE="${NOTEBOOK%.ipynb}_output.ipynb"
           echo "Running notebook: $NOTEBOOK"
           ./test/e2e/v1beta1/scripts/gh-actions/run-notebook.sh -i "$NOTEBOOK" -n kubeflow
         done
