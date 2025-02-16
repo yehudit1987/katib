@@ -28,7 +28,11 @@ inputs:
     description: whether to execute tune-api test or not
     default: false
   notebook-input:
-    description: 'List of paths to the input notebooks, separated by commas'
+    description: List of paths to the input notebooks, separated by commas
+    required: false
+    default: ""
+  algorithms:
+    description: algorythm for image suggestion
     required: false
     default: ""
 

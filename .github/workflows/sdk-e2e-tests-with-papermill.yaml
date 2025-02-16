@@ -33,7 +33,7 @@ jobs:
           tune-api: true
           katib-ui: true
           training-operator: true
-          database-type: "cmaes"
+          algorithms: "cmaes"
 
 #    strategy:
 #      fail-fast: false
