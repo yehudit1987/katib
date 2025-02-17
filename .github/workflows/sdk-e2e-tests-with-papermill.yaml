@@ -34,6 +34,8 @@ jobs:
           katib-ui: true
           training-operator: true
           algorithms: cmaes
+          trial-images: ""
+          experiments: ""
           database-type: postgres
 
 #    strategy:
