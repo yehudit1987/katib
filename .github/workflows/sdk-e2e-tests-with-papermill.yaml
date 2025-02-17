@@ -33,7 +33,7 @@ jobs:
           tune-api: true
           katib-ui: true
           training-operator: true
-          algorithms: "cmaes"
+          algorithms: cmaes
           database-type: postgres
 
 #    strategy:
