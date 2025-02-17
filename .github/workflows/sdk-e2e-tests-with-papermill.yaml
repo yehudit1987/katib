@@ -34,6 +34,7 @@ jobs:
           katib-ui: true
           training-operator: true
           algorithms: "cmaes"
+          database-type: postgres
 
 #    strategy:
 #      fail-fast: false
