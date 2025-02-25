@@ -58,11 +58,15 @@ if ! command -v papermill &> /dev/null; then
 fi
 
 echo "Running command: $papermill_cmd"
-$papermill_cmd
-
-if [ $? -ne 0 ]; then
+if ! eval "$papermill_cmd"; then
   echo "Error: papermill execution failed." >&2
   exit 1
 fi
+#$papermill_cmd
+#
+#if [ $? -ne 0 ]; then
+#  echo "Error: papermill execution failed." >&2
+#  exit 1
+#fi
 
 echo "Notebook execution completed successfully"
