@@ -23,7 +23,7 @@ set -o pipefail
 NOTEBOOK_INPUT=""
 NOTEBOOK_OUTPUT="-" # outputs to console
 NAMESPACE="default"
-KATIB_PYTHON_SDK="../../../../../sdk/python"
+KATIB_PYTHON_SDK="./sdk/python"
 
 echo "Current working directory: $(pwd)"
 echo "Expected SDK path: $KATIB_PYTHON_SDK"
