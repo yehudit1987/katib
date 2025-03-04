@@ -1,6 +1,7 @@
 name: E2E Tests with Notebooks
 on:
   pull_request: {}
+  push: {}
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
