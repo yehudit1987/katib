@@ -23,7 +23,17 @@ set -o pipefail
 NOTEBOOK_INPUT=""
 NOTEBOOK_OUTPUT="-" # outputs to console
 NAMESPACE="default"
-KATIB_PYTHON_SDK="../../../sdk/python"
+KATIB_PYTHON_SDK="../../../../../sdk/python"
+
+echo "Current working directory: $(pwd)"
+echo "Expected SDK path: $KATIB_PYTHON_SDK"
+echo "Resolved absolute SDK path: $(realpath "$KATIB_PYTHON_SDK")"
+
+# Verify if the directory exists
+if [ ! -d "$KATIB_PYTHON_SDK" ]; then
+    echo "Error: SDK path does not exist!"
+    exit 1
+fi
 
 usage() {
   echo "Usage: $0 -i <input_notebook> -o <output_notebook> [-p \"<param> <value>\"...] [-y <params.yaml>]"
